@@ -12,15 +12,15 @@ const ClassicScreen = ({ navigation }) => {
 
   return (
     <LinearGradient colors={['#ff9a8b', '#ff6a88', '#d9a7c7', '#957DAD']} style={styles.container}>
-       <View style={styles.innerContainer}>
+      <View style={styles.innerContainer}>
         <Text style={[styles.title, { fontSize: titleFontSize }]}> Classic Themes</Text>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicTopicOneScreen')}>  
           <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Topic 1</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicScreen')}> 
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicTopicTwoScreen')}> 
           <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Topic 2</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicScreen')}>  
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicTopicThreeScreen')}>  
           <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Topic 3</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('MainMenuScreen')}>
