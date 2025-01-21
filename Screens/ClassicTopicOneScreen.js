@@ -136,9 +136,8 @@ const ClassicTopicOneScreen = ({ navigation }) => {
       }
     }
   
-    // Update wrong letters after the guess is processed (only when guess is finalized)
     setWrongLettersGuessed((prevWrongLetters) => [
-      ...new Set([...prevWrongLetters, ...wrongLetters]), // Ensure uniqueness
+      ...new Set([...prevWrongLetters, ...wrongLetters]), 
     ]);
   
     return outcome;
@@ -196,7 +195,7 @@ const ClassicTopicOneScreen = ({ navigation }) => {
     ];
 
     return (
-      <View style={[styles.keyboard, {marginTop: keyboardMarginTop}]}>
+      <View style={[styles.keyboard, {marginTop: keyboardMarginTop}]}  testID="keyboard" >
         {rows.map((row, rowIndex) => (
           <View key={rowIndex} style={styles.keyboardRow}>
             {row.map((letter) => (
@@ -210,6 +209,7 @@ const ClassicTopicOneScreen = ({ navigation }) => {
                   wrongLettersGuessed.includes(letter) && { backgroundColor: 'red' },
                 ]}
                 disabled={wrongLettersGuessed.includes(letter)}
+                testID="key"
               >
                 <Text style={{fontSize: keyTextSize}}>{letter}</Text>
               </TouchableOpacity>
@@ -241,7 +241,7 @@ const ClassicTopicOneScreen = ({ navigation }) => {
             <Text style={[styles.title, { fontSize: titleFontSize }]}> Classic Theme One</Text>
             <Text style={[styles.title, { fontSize: previouslyGuessedWordFontSize }]}> Previously Guessed: </Text>
             <Text style={[styles.title, { fontSize: previouslyGuessedWordFontSize }]}> {previousWordGuessed}</Text>
-            <View style={styles.row}>
+            <View style={styles.row} data-testid="feedback-row">
                 {Array.from({ length: lengthOfWordToBeGuessed }, (_, index) => (
                 <View
                     key={index}
@@ -251,6 +251,7 @@ const ClassicTopicOneScreen = ({ navigation }) => {
                         {width: cellWidth},
                         {height: cellHeight},
                     ]}
+                    testID={'feedback-cell'}
                 >
                     <Text style={{fontSize: cellTextSize}}>
                         {playerGuess[index] || ''} {/* Show guessed letters */}
@@ -258,27 +259,27 @@ const ClassicTopicOneScreen = ({ navigation }) => {
                 </View>
                 ))}
             </View>
-            <TouchableOpacity style={[styles.submitButton, {height: getNextWordButtonHeight}, {width: getNextWordButtonWidth}]} onPress={getNextWord}>
+            <TouchableOpacity style={[styles.submitButton, {height: getNextWordButtonHeight}, {width: getNextWordButtonWidth}]} onPress={getNextWord} testID="get-next-word-button">
                 <Text>Get Next Word</Text>
             </TouchableOpacity>
             <View style={[styles.secondContainer, {marginTop: guessButtonMarginTop}]}>
-              <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={handleGuess}>
+              <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={handleGuess} testID="guess-button">
                   <Text>Guess</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={clearGuess}>
+              <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={clearGuess} testID="clear-guess-button">
                   <Text>Clear Guess</Text>
               </TouchableOpacity>
             </View>
             <View style={[styles.secondContainer, {marginTop: guessButtonMarginTop}]}>
-              <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={getHint}>
+              <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={getHint} testID="get-hint-button">
                   <Text>Hint</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={getAnswer}>
+              <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={getAnswer} testID="reveal-ans-button">
                   <Text>Reveal Answer</Text>
               </TouchableOpacity>
             </View>
             <OnScreenKeyboard/>
-            <TouchableOpacity onPress={() => navigation.navigate('ClassicScreen')}>
+            <TouchableOpacity style={styles.guessButton} onPress={() => navigation.navigate('ClassicScreen')}>
               <Text>Return to classic Themes</Text>
             </TouchableOpacity>
         </View>
