@@ -11,18 +11,24 @@ const ClassicScreen = ({ navigation }) => {
   const buttonTextFontSize = width * 0.06;
 
   return (
+    // LinearGradient to set background for the screen
     <LinearGradient colors={['#ff9a8b', '#ff6a88', '#d9a7c7', '#957DAD']} style={styles.container}>
-      <View style={styles.innerContainer}>
+      <View style={styles.innerContainer}> 
+        {/* Title text with dynamic font size */}
         <Text style={[styles.title, { fontSize: titleFontSize }]}> Classic Themes</Text>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicTopicOneScreen')}>  
-          <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Topic 1</Text>
+        {/* TouchableOpacity for theme 1 */}
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicThemeOneScreen')}>  
+          <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Theme 1</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicTopicTwoScreen')}> 
-          <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Topic 2</Text>
+        {/* TouchableOpacity for theme 2 */}
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicThemeTwoScreen')}> 
+          <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Theme 2</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicTopicThreeScreen')}>  
-          <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Topic 3</Text>
+        {/* TouchableOpacity for theme 3 */}
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicThemeThreeScreen')}>  
+          <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Theme 3</Text>
         </TouchableOpacity>
+        {/* TouchableOpacity for returning to MainMenuScreen */}
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('MainMenuScreen')}>
           <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Return to Main Menu</Text>
         </TouchableOpacity>
@@ -31,6 +37,7 @@ const ClassicScreen = ({ navigation }) => {
   );
 };
 
+//Styling for the UI elements
 const styles = StyleSheet.create({
   container: {
     flex: 1,

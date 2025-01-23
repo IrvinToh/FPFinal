@@ -5,7 +5,7 @@ import { View, Text, StyleSheet,TouchableOpacity, Dimensions, Alert } from 'reac
 const { width, height } = Dimensions.get('window');
 const words = ['yank', 'mother', 'bravo', 'oompaa']; // A list of words to be guessed
 
-const ClassicTopicThreeScreen = ({ navigation }) => {
+const ClassicThemeOneScreen = ({ navigation }) => {
 
 
     //use states
@@ -379,4 +379,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default ClassicTopicThreeScreen;
+export default ClassicThemeOneScreen;

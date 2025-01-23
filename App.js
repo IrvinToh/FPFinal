@@ -5,9 +5,9 @@ import { NavigationContainer } from '@react-navigation/native';  // Import the n
 import { createStackNavigator } from '@react-navigation/stack'; // Import stack navigator
 import MainMenuScreen from './Screens/MainMenuScreen.js'; //import MainMenuScreen
 import ClassicScreen from './Screens/ClassicScreen.js'; //import MainMenuScreen
-import ClassicTopicOneScreen from './Screens/ClassicTopicOneScreen.js'; //import ClassicTopicOneScreen
-import ClassicTopicTwoScreen from './Screens/ClassicTopicTwoScreen.js'; //import ClassicTopicTwoScreen
-import ClassicTopicThreeScreen from './Screens/ClassicTopicThreeScreen.js'; //import ClassicTopicThreeScreen
+import ClassicThemeOneScreen from './Screens/ClassicThemeOneScreen.js'; //import ClassicThemeOneScreen
+import ClassicThemeTwoScreen from './Screens/ClassicThemeTwoScreen.js'; //import ClassicThemeTwoScreen
+import ClassicThemeThreeScreen from './Screens/ClassicThemeThreeScreen.js'; //import ClassicThemeThreeScreen
 import TimeChallengeScreen from './Screens/TimeChallengeScreen.js'; //import TimeChallengeScreen
 import ProgressionScreen from './Screens/ProgressionScreen.js'; //import ProgressionScreen
 import GuideScreen from './Screens/GuideScreen.js'; //import GuideScreen
@@ -25,9 +25,9 @@ export default function App() {
         <Stack.Screen name="TimeChallengeScreen" component={TimeChallengeScreen} options={{headerShown: false}} />
         <Stack.Screen name="ProgressionScreen" component={ProgressionScreen} options={{headerShown: false}} />
         <Stack.Screen name="GuideScreen" component={GuideScreen} options={{headerShown: false}} /> 
-        <Stack.Screen name="ClassicTopicOneScreen" component={ClassicTopicOneScreen} options={{headerShown: false}} /> 
-        <Stack.Screen name="ClassicTopicTwoScreen" component={ClassicTopicTwoScreen} options={{headerShown: false}} />
-        <Stack.Screen name="ClassicTopicThreeScreen" component={ClassicTopicThreeScreen} options={{headerShown: false}} />
+        <Stack.Screen name="ClassicThemeOneScreen" component={ClassicThemeOneScreen} options={{headerShown: false}} /> 
+        <Stack.Screen name="ClassicThemeTwoScreen" component={ClassicThemeTwoScreen} options={{headerShown: false}} />
+        <Stack.Screen name="ClassicThemeThreeScreen" component={ClassicThemeThreeScreen} options={{headerShown: false}} />
       </Stack.Navigator>
     </NavigationContainer>
   );
