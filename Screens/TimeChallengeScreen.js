@@ -13,15 +13,15 @@ const TimeChallengeScreen = ({ navigation }) => {
   return (
     <LinearGradient colors={['#ff9a8b', '#ff6a88', '#d9a7c7', '#957DAD']} style={styles.container}>
       <View>
-        <Text style={[styles.title, { fontSize: titleFontSize }]}>Themes</Text>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicScreen')}>  
-          <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Topic 1</Text>
+        <Text style={[styles.title, { fontSize: titleFontSize }]}>Time Challenge Themes</Text>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('TimeChallengeThemeOneScreen')}>  
+          <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Theme 1</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicScreen')}> 
-          <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Topic 2</Text>
+          <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Theme 2</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicScreen')}>  
-          <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Topic 3</Text>
+          <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Theme 3</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('MainMenuScreen')}>
           <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Return to Main Menu</Text>

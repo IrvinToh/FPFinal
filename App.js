@@ -8,6 +8,7 @@ import ClassicScreen from './Screens/ClassicScreen.js'; //import MainMenuScreen
 import ClassicThemeOneScreen from './Screens/ClassicThemeOneScreen.js'; //import ClassicThemeOneScreen
 import ClassicThemeTwoScreen from './Screens/ClassicThemeTwoScreen.js'; //import ClassicThemeTwoScreen
 import ClassicThemeThreeScreen from './Screens/ClassicThemeThreeScreen.js'; //import ClassicThemeThreeScreen
+import TimeChallengeThemeOneScreen from './Screens/TimeChallengeThemeOneScreen.js'; //import TimeChallengeThemeOneScreen
 import TimeChallengeScreen from './Screens/TimeChallengeScreen.js'; //import TimeChallengeScreen
 import ProgressionScreen from './Screens/ProgressionScreen.js'; //import ProgressionScreen
 import GuideScreen from './Screens/GuideScreen.js'; //import GuideScreen
@@ -28,6 +29,7 @@ export default function App() {
         <Stack.Screen name="ClassicThemeOneScreen" component={ClassicThemeOneScreen} options={{headerShown: false}} /> 
         <Stack.Screen name="ClassicThemeTwoScreen" component={ClassicThemeTwoScreen} options={{headerShown: false}} />
         <Stack.Screen name="ClassicThemeThreeScreen" component={ClassicThemeThreeScreen} options={{headerShown: false}} />
+        <Stack.Screen name="TimeChallengeThemeOneScreen" component={TimeChallengeThemeOneScreen} options={{headerShown: false}} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -5,7 +5,7 @@ import { View, Text, StyleSheet,TouchableOpacity, Dimensions, Alert } from 'reac
 const { width, height } = Dimensions.get('window');
 const words = ['yank', 'mother', 'bravo', 'oompaa']; // A list of words to be guessed
 
-const ClassicThemeOneScreen = ({ navigation }) => {
+const TimeChallengeThemeOneScreen = ({ navigation }) => {
 
 
     //use states
@@ -16,8 +16,14 @@ const ClassicThemeOneScreen = ({ navigation }) => {
     const [currentWordToBeGuessed, setCurrentWordToBeGuessed] = useState('');
     const [lengthOfWordToBeGuessed, setLengthOfWordToBeGuessed] = useState(0);
     const [wrongLettersGuessed, setWrongLettersGuessed] = useState([]);
-    const [previousWordGuessed, setPreviousWordGuessed] = useState('Guess a word!');
-    const [hint, setHint] = useState('');
+    const [jumbledWord, setJumbledWord] = useState('');
+    const [timer, setTimer] = useState(60);
+    const [timerStatus, setTimerStatus] = useState(false);
+    const [lives, setLives] = useState(5);
+    const [round, setRound] = useState(false);
+    const [score, setScore] = useState(0);
+    const [highScore, sethighScore] = useState(0);
+    const [startRoundButtonIsVisible, setStartRoundButtonIsVisible] = useState(true);
 
     //responsive sizes
     const titleFontSize = width * 0.1;
@@ -40,18 +46,80 @@ const ClassicThemeOneScreen = ({ navigation }) => {
     const returnToClassicThemesButtonWidth = width * 0.94;
     const returnToClassicThemesButtonHeight = height * 0.05;
     const returnToClassicThemesButtonMarginTop = height * 0.01;
+    const jumbledWordFontSize = width * 0.05;
+    const upperContainerFontSize = width * 0.05;
+    const subsetContainerWidth = width * 0.375;
+    const subsetContainerHeight = height * 0.1;
+
+
+    //resets the states to prepare for a new round
+    const startRound = () => {
+      setRound(true);
+      setPlayerGuess('');
+      setColouredFeedback(['', '', '', '', '']);
+      setMessage('');
+      setWordGuessedCorrectly(false);
+      setLives(5); // Reset lives on start
+      setTimer(60); // Reset timer on start
+      setTimerStatus(true);
+      setScore(0);
+      setStartRoundButtonIsVisible(false);
+      
+    }
+
+    //function to end the current round
+    const endRound = () => {
+      setRound(false);
+      setTimerStatus(false);
+      setMessage('Round over!');
+      setJumbledWord('');
+    }
 
     //to pick a word from the list of words to be guessed
     const getRandomWord = () => {
         return words[Math.floor(Math.random() * words.length)].toLowerCase();
     }
 
+    //shuffle words
+    const jumbleWords = (word) => {
+        let wordSplited = word.split('');
+        for(let i=wordSplited.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i+1));
+        [wordSplited[i], wordSplited[j]] = [wordSplited[j], wordSplited[i]];
+        }
+        return wordSplited.join('');
+    }
+
     useEffect(() => {
+      if(round) {
         const newWord = getRandomWord();
+        const shuffledWord = jumbleWords(newWord);
+        setJumbledWord(shuffledWord);
         setCurrentWordToBeGuessed(newWord);
         setLengthOfWordToBeGuessed(newWord.length);
-        
-      }, []); 
+        setTimerStatus(true);
+      }
+    }, [round]); 
+
+    //This function handles the timer function
+    useEffect(() => {
+      if (timerStatus && timer > 0) {
+        const interval = setInterval(() => {
+          setTimer((previousTimer) => previousTimer - 1); // Decrease timer by 1 each second
+        }, 1000);
+    
+        return () => clearInterval(interval);
+      } else if (timer === 0) {
+        endRound(); 
+      }
+    }, [timer, timerStatus]); 
+
+    //This function triggers the end of the round when the players use up their lives
+    useEffect(() => {
+      if (lives === 0) {
+        endRound();
+      }
+    }, [lives]); 
 
     //Determines whether the players got their guesses right
     const handleGuess = () => {
@@ -73,7 +141,9 @@ const ClassicThemeOneScreen = ({ navigation }) => {
               ],
               {cancelable: true}
             )
-            } else {
+            setTimer(previousTimer => previousTimer + 5);
+            setScore(previousScore => previousScore + 1);
+          } else {
               // If playerGuess does not match current word to be guessed
               Alert.alert(
                 "Error",
@@ -86,7 +156,6 @@ const ClassicThemeOneScreen = ({ navigation }) => {
                 ],
                 {cancelable: true}
               )
-            setPreviousWordGuessed(playerGuess);
             }
         } else {
           //If length of playerGuess does not match length of current word to be guessed
@@ -101,6 +170,7 @@ const ClassicThemeOneScreen = ({ navigation }) => {
             ],
             {cancelable: true}
           )
+          setLives(previousLives => previousLives -1);
         }
     };
 
@@ -114,14 +184,11 @@ const ClassicThemeOneScreen = ({ navigation }) => {
         let newWord = getRandomWord();
         while (newWord === currentWordToBeGuessed) 
         { 
-        newWord = getRandomWord(); 
+          newWord = getRandomWord(); 
         }
-        setPreviousWordGuessed('');
         setWordGuessedCorrectly(false);
         setPlayerGuess('');
         setColouredFeedback('');
-        setMessage('');
-        setHint('');
 
         setCurrentWordToBeGuessed(newWord);
         setLengthOfWordToBeGuessed(newWord.length);
@@ -161,38 +228,8 @@ const ClassicThemeOneScreen = ({ navigation }) => {
     return outcome;
   };
 
-  const getRandomLetterForHint = () => {
-    return Math.floor(Math.random() * (currentWordToBeGuessed.length))
-  }
+  
 
-  const getHint = () => {
-    Alert.alert(
-      "Hint",
-      currentWordToBeGuessed[getRandomLetterForHint()],
-      [
-        {
-          text: "OK",
-          onPress: () => console.log("Hint acknowledged")
-        }
-      ],
-      {cancelable: true}
-    )
-  }
-
-
-  const getAnswer = () => {
-    Alert.alert(
-      "Answer",
-      currentWordToBeGuessed,
-      [
-        {
-          text: "OK",
-          onPress: () => console.log("Answer acknowledged")
-        }
-      ],
-      {cancelable: true}
-    )
-  }
 
   //handles the logic for the on screen keyboard
   const handleKeyPressInOnScreenKeyboard = (key) => {
@@ -271,115 +308,153 @@ const ClassicThemeOneScreen = ({ navigation }) => {
 
     return (
     <LinearGradient colors={['#ff9a8b', '#ff6a88', '#d9a7c7', '#957DAD']} style={styles.container}>
-        <View style={styles.innerContainer}>
-            <Text style={[styles.title, { fontSize: titleFontSize }]}> Classic Theme One</Text>
-            <Text style={[styles.title, { fontSize: previouslyGuessedWordFontSize }]}> Previously Guessed: </Text>
-            <Text style={[styles.title, { fontSize: previouslyGuessedWordFontSize }]}> {previousWordGuessed}</Text>
-            <View style={styles.row} data-testid="feedback-row">
-                {Array.from({ length: lengthOfWordToBeGuessed }, (_, index) => (
-                <View
-                    key={index}
-                    style={[
-                        styles.cell,
-                        colouredFeedback[index] && { backgroundColor: colouredFeedback[index] },
-                        {width: cellWidth},
-                        {height: cellHeight},
-                    ]}
-                    testID={'feedback-cell'}
-                >
-                    <Text style={{fontSize: cellTextSize}}>
-                        {playerGuess[index] || ''} {/* Show guessed letters */}
-                    </Text>
-                </View>
-                ))}
-            </View>
-            <TouchableOpacity style={[styles.submitButton, {height: getNextWordButtonHeight}, {width: getNextWordButtonWidth}]} onPress={getNextWord} testID="get-next-word-button">
-                <Text>Get Next Word</Text>
-            </TouchableOpacity>
-            <View style={[styles.secondContainer, {marginTop: guessButtonMarginTop}]}>
-              <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={handleGuess} testID="guess-button">
-                  <Text>Guess</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={clearGuess} testID="clear-guess-button">
-                  <Text>Clear Guess</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={[styles.secondContainer, {marginTop: guessButtonMarginTop}]}>
-              <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={getHint} testID="get-hint-button">
-                  <Text>Hint</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={getAnswer} testID="reveal-ans-button">
-                  <Text>Reveal Answer</Text>
-              </TouchableOpacity>
-            </View>
-            <OnScreenKeyboard/>
-            <TouchableOpacity style={[styles.guessButton, {height: returnToClassicThemesButtonHeight}, {width: returnToClassicThemesButtonWidth}, {marginTop: returnToClassicThemesButtonMarginTop}]} onPress={() => navigation.navigate('ClassicScreen')}>
-              <Text>Return to classic Themes</Text>
-            </TouchableOpacity>
+      <View style={styles.innerContainer}>
+        <Text style={[styles.title, { fontSize: titleFontSize }]}>Theme One</Text>
+        {startRoundButtonIsVisible && (
+          <TouchableOpacity style={[styles.startRoundButton, {height: getNextWordButtonHeight}, {width:getNextWordButtonWidth}]} onPress={startRound}>
+            <Text>Start Round</Text>
+          </TouchableOpacity>
+        )}
+        <View style={styles.upperContainer}>
+          <View style={[styles.leftSubsetContainer, {width:subsetContainerWidth}, {height:subsetContainerHeight}]}>
+            <Text style={{fontSize: upperContainerFontSize}}>Timer: {timer}s</Text>
+          </View>
+          <View style={[styles.rightSubsetContainer, {width:subsetContainerWidth}, {height:subsetContainerHeight}]}>
+            <Text style={{fontSize: upperContainerFontSize}}>Lives: {lives}</Text>
+            <Text style={{fontSize: upperContainerFontSize}}>Score: {score}</Text>
+          </View> 
         </View>
+        <View style={styles.scrambledWordContainer}>
+          <Text style={{fontSize:jumbledWordFontSize}}>Unscramble this word</Text>
+          <Text style={{fontSize:jumbledWordFontSize}}>{jumbledWord}</Text>
+        </View>
+        <View style={styles.row} data-testid="feedback-row">
+            {Array.from({ length: lengthOfWordToBeGuessed }, (_, index) => (
+            <View
+                key={index}
+                style={[
+                    styles.cell,
+                    colouredFeedback[index] && { backgroundColor: colouredFeedback[index] },
+                    {width: cellWidth},
+                    {height: cellHeight},
+                ]}
+                testID={'feedback-cell'}
+            >
+                <Text style={{fontSize: cellTextSize}}>
+                    {playerGuess[index] || ''} {/* Show guessed letters */}
+                </Text>
+            </View>
+            ))}
+        </View>
+        <TouchableOpacity style={[styles.submitButton, {height: getNextWordButtonHeight}, {width: getNextWordButtonWidth}]} onPress={getNextWord} testID="get-next-word-button">
+            <Text>Get Next Word</Text>
+        </TouchableOpacity>
+        <View style={[styles.secondContainer, {marginTop: guessButtonMarginTop}]}>
+          <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={handleGuess} testID="guess-button">
+              <Text>Guess</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={clearGuess} testID="clear-guess-button">
+              <Text>Clear Guess</Text>
+          </TouchableOpacity>
+        </View>
+        <OnScreenKeyboard/>
+        <TouchableOpacity style={[styles.guessButton, {height: returnToClassicThemesButtonHeight}, {width: returnToClassicThemesButtonWidth}, {marginTop: returnToClassicThemesButtonMarginTop}]} onPress={() => navigation.navigate('TimeChallengeScreen')}>
+          <Text>Return to Time Challenge Themes</Text>
+        </TouchableOpacity>
+      </View>
     </LinearGradient>
     );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  innerContainer: {
-    flexDirection: 'column', 
-    alignItems: 'center',
-    width: '100%', 
-    paddingHorizontal: 20, 
-  },
-  secondContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  title: {
-    fontWeight: 'bold',
-  },
-  row: {
-    flexDirection: 'row',
-    margin: 5,
-  },
-  cell: {
-    borderWidth: 1,
-    borderColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    innerContainer: {
+      flexDirection: 'column', 
+      alignItems: 'center',
+      width: '100%', 
+      paddingHorizontal: 20, 
+    },
+    secondContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
+    },
+    title: {
+      fontWeight: 'bold',
+    },
+    row: {
+      flexDirection: 'row',
+      margin: 5,
+    },
+    cell: {
+      borderWidth: 2,
+      borderColor: '#000',
+      justifyContent: 'center',
+      alignItems: 'center',
+  
+    },
+    submitButton: {
+      alignItems: 'center', 
+      borderWidth: 2,
+      justifyContent: 'center',
+    },
+    guessButton: {
+      alignItems: 'center', 
+      borderWidth: 2,
+      justifyContent: 'center',
+    },
+    keyboard: {
+      flexDirection: 'column',
+      justifyContent: 'center',
+      borderWidth: 2,
+      padding: 5,
+    },
+    keyboardRow: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+    },
+    key: {
+      margin: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 2,
+    },
+    upperContainer: {
+      flexDirection: 'row',
+      flex: 1,
+      justifyContent: 'Space-between',
+    },
+    leftSubsetContainer: {
+      borderWidth: 2,
+      padding: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: '5%',
+    },
+    rightSubsetContainer: {
+      flexDirection: 'column',
+      borderWidth: 2,
+      padding: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    scrambledWordContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: '15%',
+    },
+    startRoundButton: {
+      alignItems: 'center',
+      borderWidth: 2,
+      justifyContent: 'center',
+      marginBottom: '2%',
+    }
+  
+  });
 
-  },
-  submitButton: {
-    alignItems: 'center', 
-    borderWidth: 1,
-    justifyContent: 'center',
-  },
-  guessButton: {
-    alignItems: 'center', 
-    borderWidth: 1,
-    justifyContent: 'center',
-  },
-  keyboard: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    borderWidth: 1,
-    padding: 5,
-  },
-  keyboardRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  key: {
-    margin: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-  },
-
-});
-
-export default ClassicThemeOneScreen;
+export default TimeChallengeThemeOneScreen;
