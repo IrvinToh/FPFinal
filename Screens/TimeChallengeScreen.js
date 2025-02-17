@@ -14,15 +14,19 @@ const TimeChallengeScreen = ({ navigation }) => {
     <LinearGradient colors={['#ff9a8b', '#ff6a88', '#d9a7c7', '#957DAD']} style={styles.container}>
       <View>
         <Text style={[styles.title, { fontSize: titleFontSize }]}>Time Challenge Themes</Text>
+        {/* TouchableOpacity for theme 1 */}
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('TimeChallengeThemeOneScreen')}>  
           <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Theme 1</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicScreen')}> 
+        {/* TouchableOpacity for theme 2 */}
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('TimeChallengeThemeTwoScreen')}> 
           <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Theme 2</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicScreen')}>  
+        {/* TouchableOpacity for theme 3 */}
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('TimeChallengeThemeThreeScreen')}>  
           <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Theme 3</Text>
         </TouchableOpacity>
+        {/* TouchableOpacity for returning to MainMenuScreen */}
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('MainMenuScreen')}>
           <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Return to Main Menu</Text>
         </TouchableOpacity>

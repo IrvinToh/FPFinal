@@ -29,8 +29,8 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
     const titleFontSize = width * 0.1;
     const previouslyGuessedWordFontSize = width * 0.05;
     const buttonTextFontSize = width * 0.06;
-    const cellWidth = width * 0.15;
-    const cellHeight = height * 0.08;
+    const cellWidth = width * 0.1;
+    const cellHeight = height * 0.06;
     const cellTextSize = width * 0.06;
     const getNextWordButtonWidth = width * 0.8;
     const getNextWordButtonHeight = height * 0.04;
@@ -59,8 +59,8 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
       setColouredFeedback(['', '', '', '', '']);
       setMessage('');
       setWordGuessedCorrectly(false);
-      setLives(5); // Reset lives on start
-      setTimer(60); // Reset timer on start
+      setLives(5); 
+      setTimer(60); 
       setTimerStatus(true);
       setScore(0);
       setStartRoundButtonIsVisible(false);
@@ -71,8 +71,8 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
     const endRound = () => {
       setRound(false);
       setTimerStatus(false);
-      setMessage('Round over!');
       setJumbledWord('');
+
     }
 
     //to pick a word from the list of words to be guessed
@@ -156,6 +156,7 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
                 ],
                 {cancelable: true}
               )
+              setLives(previousLives => previousLives -1);
             }
         } else {
           //If length of playerGuess does not match length of current word to be guessed
@@ -196,38 +197,40 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
     }
 
   //assigns colour to the cells depending on the letters in it
-  const getColouredFeedback = (guess) => {
-    const outcome = [];
-    const wordCopy = [...currentWordToBeGuessed]; // Make a copy of the word to track remaining unmatched letters
+  const getColouredFeedback = (playerGuess) => {
+    const overallColourFeedback = [];
+    const wordToBeGuessed = [...currentWordToBeGuessed]; 
   
-    // First pass: Mark greens (correct letter, correct position)
+    //Check for whether each letter in playerGuess matches corresponding letter in wordToBeGuessed
+    //Highlights green if condition is fulfilled
     for (let i = 0; i < lengthOfWordToBeGuessed; i++) {
-      if (guess[i] === wordCopy[i]) {
-        outcome[i] = 'green';
-        wordCopy[i] = null; // Remove the letter from the word copy, as it is already matched
+      if (playerGuess[i] === wordToBeGuessed[i]) {
+        overallColourFeedback[i] = 'green';
+        wordToBeGuessed[i] = null; 
       } else {
-        outcome[i] = null; // Initialize empty if not green
+        overallColourFeedback[i] = null; 
       }
     }
     
-    // Second pass: Mark yellows (correct letter, wrong position)
+    //check at each index position in coverallColourFeedback for colours assigned
+    //If letter exists in wordToBeGuessed, yellow colour is assigned.
+    //If letter does not exist in wordToBeGuessed, red colour is assigned. 
     for (let i = 0; i < lengthOfWordToBeGuessed; i++) {
-      if (outcome[i] === null) { // Only check for yellow if it's not already green
-        const letter = guess[i];
-        const indexInWord = wordCopy.indexOf(letter);
+      if (overallColourFeedback[i] === null) { 
+        const letter = playerGuess[i];
+        const indexInWord = wordToBeGuessed.indexOf(letter);
   
         if (indexInWord !== -1) {
-          outcome[i] = 'yellow';
-          wordCopy[indexInWord] = null; // Remove this letter from wordCopy
+          overallColourFeedback[i] = 'yellow';
+          wordToBeGuessed[indexInWord] = null; 
         } else {
-          outcome[i] = 'red'; // If the letter doesn't exist in the word anymore, mark as red
+          overallColourFeedback[i] = 'red'; 
         }
       }
     }
   
-    return outcome;
+    return overallColourFeedback;
   };
-
   
 
 
@@ -446,7 +449,7 @@ const styles = StyleSheet.create({
     scrambledWordContainer: {
       alignItems: 'center',
       justifyContent: 'center',
-      marginTop: '15%',
+      marginTop: '25%',
     },
     startRoundButton: {
       alignItems: 'center',

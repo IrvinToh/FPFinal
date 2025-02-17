@@ -1,12 +1,25 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet,TouchableOpacity, Dimensions, Alert } from 'react-native';
+import { useEventContext } from '../EventContext';
 
 const { width, height } = Dimensions.get('window');
-const words = ['yank', 'mother', 'bravo', 'oompaa']; // A list of words to be guessed
-
+const words = ['Basketball', 'Tennis','Football', 'Cricket', 'Fencing', 'Volleyball', 'Archery', 'Bowling', 'Taekwondo', 'Golf']; // A list of words to be guessed
+const definitions = [
+  'A sport in which two opposing teams of five players strive to put a ball through a hoop.',
+  ' A sport played by two players (or four in doubles), who alternately strike the ball over a net using racquets',
+  'a game in which two teams each contend to get a round ball into the other team\'s goal primarily by kicking the ball.', 
+  'A game played outdoors with bats and a ball between two teams of eleven, popular in England and many Commonwealth countries.', 
+  'The art or sport of duelling with swords',
+  'A game played on a rectangular court between two teams of two to six players which involves striking a ball back and forth over a net',
+  'The practice or sport of shooting arrows with a bow.',
+  'A game played by rolling a ball down an alley and trying to knock over a triangular group of ten pins',
+  'A martial arts form from Korea, known for its elaborate kicking techniques.',
+  'A ball game in which the objective is to hit a ball into each of a series of holes in the minimum number of strokes'
+]
 const ClassicThemeTwoScreen = ({ navigation }) => {
 
+    const { setWordToBeSaved } = useEventContext();
 
     //use states
     const [playerGuess, setPlayerGuess] = useState('');
@@ -19,12 +32,13 @@ const ClassicThemeTwoScreen = ({ navigation }) => {
     const [previousWordGuessed, setPreviousWordGuessed] = useState('Guess a word!');
     const [hint, setHint] = useState('');
 
+
     //responsive sizes
     const titleFontSize = width * 0.1;
     const previouslyGuessedWordFontSize = width * 0.05;
     const buttonTextFontSize = width * 0.06;
-    const cellWidth = width * 0.15;
-    const cellHeight = height * 0.08;
+    const cellWidth = width * 0.1;
+    const cellHeight = height * 0.06;
     const cellTextSize = width * 0.06;
     const getNextWordButtonWidth = width * 0.8;
     const getNextWordButtonHeight = height * 0.04;
@@ -56,11 +70,13 @@ const ClassicThemeTwoScreen = ({ navigation }) => {
     //Determines whether the players got their guesses right
     const handleGuess = () => {
         if (playerGuess.length === lengthOfWordToBeGuessed) {
-            const playerGuessSmallLetters = playerGuess.toLowerCase();
+            const playerGuessSmallLetters = playerGuess.toLowerCase(); 
             const newColouredFeedback = getColouredFeedback(playerGuessSmallLetters);
             setColouredFeedback(newColouredFeedback);
-            if (playerGuessSmallLetters === currentWordToBeGuessed) {
-            setWordGuessedCorrectly(true);
+            //Player guess is compared with the current word to be guessed
+            if (playerGuessSmallLetters === currentWordToBeGuessed) { 
+            setWordGuessedCorrectly(true); 
+            setWordToBeSaved(currentWordToBeGuessed);
             Alert.alert(
               "Result",
               "Congratulations, You got the correct answer!",
@@ -73,6 +89,7 @@ const ClassicThemeTwoScreen = ({ navigation }) => {
               {cancelable: true}
             )
             } else {
+              // If playerGuess does not match current word to be guessed
               Alert.alert(
                 "Error",
                 "Try again",
@@ -87,6 +104,7 @@ const ClassicThemeTwoScreen = ({ navigation }) => {
             setPreviousWordGuessed(playerGuess);
             }
         } else {
+          //If length of playerGuess does not match length of current word to be guessed
           Alert.alert(
             "Error",
             "Guess must be " + lengthOfWordToBeGuessed + " letters!",
@@ -101,10 +119,12 @@ const ClassicThemeTwoScreen = ({ navigation }) => {
         }
     };
 
+    
+
     //function for clearing the player's guess
     const clearGuess = () => {
         setPlayerGuess('');
-    }
+    };
 
     //to pick a new word from the list of words to be guessed
     const getNextWord = () => {
@@ -123,39 +143,42 @@ const ClassicThemeTwoScreen = ({ navigation }) => {
         setCurrentWordToBeGuessed(newWord);
         setLengthOfWordToBeGuessed(newWord.length);
         setWrongLettersGuessed([]);
-    }
+    };
 
   //assigns colour to the cells depending on the letters in it
-  const getColouredFeedback = (guess) => {
-    const outcome = [];
-    const wordCopy = [...currentWordToBeGuessed]; // Make a copy of the word to track remaining unmatched letters
+  const getColouredFeedback = (playerGuess) => {
+    const overallColourFeedback = [];
+    const wordToBeGuessed = [...currentWordToBeGuessed]; 
   
-    // First pass: Mark greens (correct letter, correct position)
+    //Check for whether each letter in playerGuess matches corresponding letter in wordToBeGuessed
+    //Highlights green if condition is fulfilled
     for (let i = 0; i < lengthOfWordToBeGuessed; i++) {
-      if (guess[i] === wordCopy[i]) {
-        outcome[i] = 'green';
-        wordCopy[i] = null; // Remove the letter from the word copy, as it is already matched
+      if (playerGuess[i] === wordToBeGuessed[i]) {
+        overallColourFeedback[i] = 'green';
+        wordToBeGuessed[i] = null; 
       } else {
-        outcome[i] = null; // Initialize empty if not green
-      }
-    }
+        overallColourFeedback[i] = null; 
+      };
+    };
     
-    // Second pass: Mark yellows (correct letter, wrong position)
+    //check at each index position in coverallColourFeedback for colours assigned
+    //If letter exists in wordToBeGuessed, yellow colour is assigned.
+    //If letter does not exist in wordToBeGuessed, red colour is assigned. 
     for (let i = 0; i < lengthOfWordToBeGuessed; i++) {
-      if (outcome[i] === null) { // Only check for yellow if it's not already green
-        const letter = guess[i];
-        const indexInWord = wordCopy.indexOf(letter);
+      if (overallColourFeedback[i] === null) { 
+        const letter = playerGuess[i];
+        const indexInWord = wordToBeGuessed.indexOf(letter);
   
         if (indexInWord !== -1) {
-          outcome[i] = 'yellow';
-          wordCopy[indexInWord] = null; // Remove this letter from wordCopy
+          overallColourFeedback[i] = 'yellow';
+          wordToBeGuessed[indexInWord] = null; 
         } else {
-          outcome[i] = 'red'; // If the letter doesn't exist in the word anymore, mark as red
+          overallColourFeedback[i] = 'red'; 
         }
       }
     }
   
-    return outcome;
+    return overallColourFeedback;
   };
 
   const getRandomLetterForHint = () => {
@@ -269,7 +292,7 @@ const ClassicThemeTwoScreen = ({ navigation }) => {
     return (
     <LinearGradient colors={['#ff9a8b', '#ff6a88', '#d9a7c7', '#957DAD']} style={styles.container}>
         <View style={styles.innerContainer}>
-            <Text style={[styles.title, { fontSize: titleFontSize }]}> Classic Theme One</Text>
+            <Text style={[styles.title, { fontSize: titleFontSize }]}>Sports</Text>
             <Text style={[styles.title, { fontSize: previouslyGuessedWordFontSize }]}> Previously Guessed: </Text>
             <Text style={[styles.title, { fontSize: previouslyGuessedWordFontSize }]}> {previousWordGuessed}</Text>
             <View style={styles.row} data-testid="feedback-row">

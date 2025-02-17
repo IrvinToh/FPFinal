@@ -9,29 +9,35 @@ import ClassicThemeOneScreen from './Screens/ClassicThemeOneScreen.js'; //import
 import ClassicThemeTwoScreen from './Screens/ClassicThemeTwoScreen.js'; //import ClassicThemeTwoScreen
 import ClassicThemeThreeScreen from './Screens/ClassicThemeThreeScreen.js'; //import ClassicThemeThreeScreen
 import TimeChallengeThemeOneScreen from './Screens/TimeChallengeThemeOneScreen.js'; //import TimeChallengeThemeOneScreen
+import TimeChallengeThemeTwoScreen from './Screens/TimeChallengeThemeTwoScreen.js'; //import TimeChallengeThemeTwoScreen
+import TimeChallengeThemeThreeScreen from './Screens/TimeChallengeThemeThreeScreen.js'; //import TimeChallengeThemeThreeScreen
 import TimeChallengeScreen from './Screens/TimeChallengeScreen.js'; //import TimeChallengeScreen
 import ProgressionScreen from './Screens/ProgressionScreen.js'; //import ProgressionScreen
 import GuideScreen from './Screens/GuideScreen.js'; //import GuideScreen
-
+import { EventProvider } from './EventContext';
 
 const Stack = createStackNavigator(); //Initalise stack navigator
 
 export default function App() {
   return (
-
-    <NavigationContainer>{/* Navigation container that holds all screens */}
-      <Stack.Navigator initialRouteName="MainMenuScreen">
-        <Stack.Screen name="MainMenuScreen" component={MainMenuScreen} options={{headerShown: false}} />
-        <Stack.Screen name="ClassicScreen" component={ClassicScreen} options={{headerShown: false}} />
-        <Stack.Screen name="TimeChallengeScreen" component={TimeChallengeScreen} options={{headerShown: false}} />
-        <Stack.Screen name="ProgressionScreen" component={ProgressionScreen} options={{headerShown: false}} />
-        <Stack.Screen name="GuideScreen" component={GuideScreen} options={{headerShown: false}} /> 
-        <Stack.Screen name="ClassicThemeOneScreen" component={ClassicThemeOneScreen} options={{headerShown: false}} /> 
-        <Stack.Screen name="ClassicThemeTwoScreen" component={ClassicThemeTwoScreen} options={{headerShown: false}} />
-        <Stack.Screen name="ClassicThemeThreeScreen" component={ClassicThemeThreeScreen} options={{headerShown: false}} />
-        <Stack.Screen name="TimeChallengeThemeOneScreen" component={TimeChallengeThemeOneScreen} options={{headerShown: false}} /> 
-      </Stack.Navigator>
-    </NavigationContainer>
+    <EventProvider>
+      <NavigationContainer>{/* Navigation container that holds all screens */}
+        <Stack.Navigator initialRouteName="MainMenuScreen">
+          <Stack.Screen name="MainMenuScreen" component={MainMenuScreen} options={{headerShown: false}} />
+          <Stack.Screen name="ClassicScreen" component={ClassicScreen} options={{headerShown: false}} />
+          <Stack.Screen name="TimeChallengeScreen" component={TimeChallengeScreen} options={{headerShown: false}} />
+          <Stack.Screen name="ProgressionScreen" component={ProgressionScreen} options={{headerShown: false}} />
+          <Stack.Screen name="GuideScreen" component={GuideScreen} options={{headerShown: false}} /> 
+          <Stack.Screen name="ClassicThemeOneScreen" component={ClassicThemeOneScreen} options={{headerShown: false}} /> 
+          <Stack.Screen name="ClassicThemeTwoScreen" component={ClassicThemeTwoScreen} options={{headerShown: false}} />
+          <Stack.Screen name="ClassicThemeThreeScreen" component={ClassicThemeThreeScreen} options={{headerShown: false}} />
+          <Stack.Screen name="TimeChallengeThemeOneScreen" component={TimeChallengeThemeOneScreen} options={{headerShown: false}} /> 
+          <Stack.Screen name="TimeChallengeThemeTwoScreen" component={TimeChallengeThemeTwoScreen} options={{headerShown: false}} /> 
+          <Stack.Screen name="TimeChallengeThemeThreeScreen" component={TimeChallengeThemeThreeScreen} options={{headerShown: false}} /> 
+        </Stack.Navigator>
+      </NavigationContainer>
+    </EventProvider>
+    
   );
 }
 

@@ -1,12 +1,25 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet,TouchableOpacity, Dimensions, Alert } from 'react-native';
+import { useEventContext } from '../EventContext';
 
 const { width, height } = Dimensions.get('window');
-const words = ['yank', 'mother', 'bravo', 'oompaa']; // A list of words to be guessed
-
+const words = ['japan', 'china','france', 'mongolia', 'russia', 'india', 'indonesia', 'australia', 'germany', 'italy']; // A list of words to be guessed
+const definitions = [
+  'A country located in asia and famous for its animated films',
+  'A country with one of the greatest population in the world',
+  'A country located in Western Europe and is home to the Eiffel Tower', 
+  'A landlocked country bordered by Russia and China', 
+  'Largest by land area',
+  'Located in South Asia, it is home to the Taj Mahal, a famous tourist spot',
+  'Located in South-east Asia, it is home to a famous touist spot known as Bali.',
+  'Famous for its kangaroos',
+  'Located in central Europe and is also the birthplace of famous composers like Beethoven',
+  'Located in Southern Europe, it is home to the famous city of Venice.'
+]
 const ClassicThemeThreeScreen = ({ navigation }) => {
 
+    const { setWordToBeSaved } = useEventContext();
 
     //use states
     const [playerGuess, setPlayerGuess] = useState('');
@@ -19,12 +32,13 @@ const ClassicThemeThreeScreen = ({ navigation }) => {
     const [previousWordGuessed, setPreviousWordGuessed] = useState('Guess a word!');
     const [hint, setHint] = useState('');
 
+
     //responsive sizes
     const titleFontSize = width * 0.1;
     const previouslyGuessedWordFontSize = width * 0.05;
     const buttonTextFontSize = width * 0.06;
-    const cellWidth = width * 0.15;
-    const cellHeight = height * 0.08;
+    const cellWidth = width * 0.1;
+    const cellHeight = height * 0.06;
     const cellTextSize = width * 0.06;
     const getNextWordButtonWidth = width * 0.8;
     const getNextWordButtonHeight = height * 0.04;
@@ -56,11 +70,13 @@ const ClassicThemeThreeScreen = ({ navigation }) => {
     //Determines whether the players got their guesses right
     const handleGuess = () => {
         if (playerGuess.length === lengthOfWordToBeGuessed) {
-            const playerGuessSmallLetters = playerGuess.toLowerCase();
+            const playerGuessSmallLetters = playerGuess.toLowerCase(); 
             const newColouredFeedback = getColouredFeedback(playerGuessSmallLetters);
             setColouredFeedback(newColouredFeedback);
-            if (playerGuessSmallLetters === currentWordToBeGuessed) {
-            setWordGuessedCorrectly(true);
+            //Player guess is compared with the current word to be guessed
+            if (playerGuessSmallLetters === currentWordToBeGuessed) { 
+            setWordGuessedCorrectly(true); 
+            setWordToBeSaved(currentWordToBeGuessed);
             Alert.alert(
               "Result",
               "Congratulations, You got the correct answer!",
@@ -73,6 +89,7 @@ const ClassicThemeThreeScreen = ({ navigation }) => {
               {cancelable: true}
             )
             } else {
+              // If playerGuess does not match current word to be guessed
               Alert.alert(
                 "Error",
                 "Try again",
@@ -87,6 +104,7 @@ const ClassicThemeThreeScreen = ({ navigation }) => {
             setPreviousWordGuessed(playerGuess);
             }
         } else {
+          //If length of playerGuess does not match length of current word to be guessed
           Alert.alert(
             "Error",
             "Guess must be " + lengthOfWordToBeGuessed + " letters!",
@@ -101,10 +119,12 @@ const ClassicThemeThreeScreen = ({ navigation }) => {
         }
     };
 
+    
+
     //function for clearing the player's guess
     const clearGuess = () => {
         setPlayerGuess('');
-    }
+    };
 
     //to pick a new word from the list of words to be guessed
     const getNextWord = () => {
@@ -123,39 +143,42 @@ const ClassicThemeThreeScreen = ({ navigation }) => {
         setCurrentWordToBeGuessed(newWord);
         setLengthOfWordToBeGuessed(newWord.length);
         setWrongLettersGuessed([]);
-    }
+    };
 
   //assigns colour to the cells depending on the letters in it
-  const getColouredFeedback = (guess) => {
-    const outcome = [];
-    const wordCopy = [...currentWordToBeGuessed]; // Make a copy of the word to track remaining unmatched letters
+  const getColouredFeedback = (playerGuess) => {
+    const overallColourFeedback = [];
+    const wordToBeGuessed = [...currentWordToBeGuessed]; 
   
-    // First pass: Mark greens (correct letter, correct position)
+    //Check for whether each letter in playerGuess matches corresponding letter in wordToBeGuessed
+    //Highlights green if condition is fulfilled
     for (let i = 0; i < lengthOfWordToBeGuessed; i++) {
-      if (guess[i] === wordCopy[i]) {
-        outcome[i] = 'green';
-        wordCopy[i] = null; // Remove the letter from the word copy, as it is already matched
+      if (playerGuess[i] === wordToBeGuessed[i]) {
+        overallColourFeedback[i] = 'green';
+        wordToBeGuessed[i] = null; 
       } else {
-        outcome[i] = null; // Initialize empty if not green
-      }
-    }
+        overallColourFeedback[i] = null; 
+      };
+    };
     
-    // Second pass: Mark yellows (correct letter, wrong position)
+    //check at each index position in coverallColourFeedback for colours assigned
+    //If letter exists in wordToBeGuessed, yellow colour is assigned.
+    //If letter does not exist in wordToBeGuessed, red colour is assigned. 
     for (let i = 0; i < lengthOfWordToBeGuessed; i++) {
-      if (outcome[i] === null) { // Only check for yellow if it's not already green
-        const letter = guess[i];
-        const indexInWord = wordCopy.indexOf(letter);
+      if (overallColourFeedback[i] === null) { 
+        const letter = playerGuess[i];
+        const indexInWord = wordToBeGuessed.indexOf(letter);
   
         if (indexInWord !== -1) {
-          outcome[i] = 'yellow';
-          wordCopy[indexInWord] = null; // Remove this letter from wordCopy
+          overallColourFeedback[i] = 'yellow';
+          wordToBeGuessed[indexInWord] = null; 
         } else {
-          outcome[i] = 'red'; // If the letter doesn't exist in the word anymore, mark as red
+          overallColourFeedback[i] = 'red'; 
         }
       }
     }
   
-    return outcome;
+    return overallColourFeedback;
   };
 
   const getRandomLetterForHint = () => {
@@ -269,7 +292,7 @@ const ClassicThemeThreeScreen = ({ navigation }) => {
     return (
     <LinearGradient colors={['#ff9a8b', '#ff6a88', '#d9a7c7', '#957DAD']} style={styles.container}>
         <View style={styles.innerContainer}>
-            <Text style={[styles.title, { fontSize: titleFontSize }]}> Classic Theme One</Text>
+            <Text style={[styles.title, { fontSize: titleFontSize }]}>Sports</Text>
             <Text style={[styles.title, { fontSize: previouslyGuessedWordFontSize }]}> Previously Guessed: </Text>
             <Text style={[styles.title, { fontSize: previouslyGuessedWordFontSize }]}> {previousWordGuessed}</Text>
             <View style={styles.row} data-testid="feedback-row">
