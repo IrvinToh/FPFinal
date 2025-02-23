@@ -26,7 +26,7 @@ const ClassicScreen = ({ navigation }) => {
         </TouchableOpacity>
         {/* TouchableOpacity for theme 3 */}
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ClassicThemeThreeScreen')}>  
-          <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Theme 3</Text>
+          <Text style={[styles.buttonText, {fontSize: buttonTextFontSize}]}>Countries</Text>
         </TouchableOpacity>
         {/* TouchableOpacity for returning to MainMenuScreen */}
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('MainMenuScreen')}>

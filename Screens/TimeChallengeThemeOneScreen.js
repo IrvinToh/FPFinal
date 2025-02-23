@@ -1,12 +1,13 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet,TouchableOpacity, Dimensions, Alert } from 'react-native';
+import { View, Text, StyleSheet,TouchableOpacity, Dimensions, Alert, Touchable } from 'react-native';
+import { useEventContext } from '../EventContext';
 
 const { width, height } = Dimensions.get('window');
 const words = ['yank', 'mother', 'bravo', 'oompaa']; // A list of words to be guessed
 
 const TimeChallengeThemeOneScreen = ({ navigation }) => {
-
+    const { highScoreOne, manageHighScore} = useEventContext();
 
     //use states
     const [playerGuess, setPlayerGuess] = useState('');
@@ -22,8 +23,8 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
     const [lives, setLives] = useState(5);
     const [round, setRound] = useState(false);
     const [score, setScore] = useState(0);
-    const [highScore, sethighScore] = useState(0);
     const [startRoundButtonIsVisible, setStartRoundButtonIsVisible] = useState(true);
+    const [roundOver, setRoundOver] = useState(false);
 
     //responsive sizes
     const titleFontSize = width * 0.1;
@@ -64,6 +65,7 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
       setTimerStatus(true);
       setScore(0);
       setStartRoundButtonIsVisible(false);
+      setRoundOver(false);
       
     }
 
@@ -72,6 +74,7 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
       setRound(false);
       setTimerStatus(false);
       setJumbledWord('');
+      setRoundOver(true);
 
     }
 
@@ -120,6 +123,10 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
         endRound();
       }
     }, [lives]); 
+
+    useEffect(() => {
+      manageHighScore(score);
+    }, [score]);
 
     //Determines whether the players got their guesses right
     const handleGuess = () => {
@@ -187,6 +194,7 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
         { 
           newWord = getRandomWord(); 
         }
+        let newJumbledWord = jumbleWords(newWord);
         setWordGuessedCorrectly(false);
         setPlayerGuess('');
         setColouredFeedback('');
@@ -194,6 +202,7 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
         setCurrentWordToBeGuessed(newWord);
         setLengthOfWordToBeGuessed(newWord.length);
         setWrongLettersGuessed([]);
+        setJumbledWord(newJumbledWord);
     }
 
   //assigns colour to the cells depending on the letters in it
@@ -362,8 +371,20 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
         </View>
         <OnScreenKeyboard/>
         <TouchableOpacity style={[styles.guessButton, {height: returnToClassicThemesButtonHeight}, {width: returnToClassicThemesButtonWidth}, {marginTop: returnToClassicThemesButtonMarginTop}]} onPress={() => navigation.navigate('TimeChallengeScreen')}>
-          <Text>Return to Time Challenge Themes</Text>
+          <Text>Return</Text>
         </TouchableOpacity>
+
+        {roundOver && (
+          <View style = {styles.roundOverScreenOverlay}>
+            <View style={styles.roundOverPanel}>
+              <Text>Round Over!</Text>
+              <Text>Current score: {score}</Text>
+              <Text>High score: {highScoreOne}</Text>
+              <TouchableOpacity onPress={() => startRound()}><Text>Try again</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('TimeChallengeScreen')}><Text>Return</Text></TouchableOpacity>
+            </View>
+          </View>
+        )}
       </View>
     </LinearGradient>
     );
@@ -456,7 +477,24 @@ const styles = StyleSheet.create({
       borderWidth: 2,
       justifyContent: 'center',
       marginBottom: '2%',
-    }
+    },
+    roundOverScreenOverlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    roundOverPanel: {
+      backgroundColor: 'white',
+      padding: 20,
+      borderRadius: 10,
+      alignItems: 'center',
+    },
+
   
   });
 

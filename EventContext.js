@@ -3,11 +3,12 @@ import React, { createContext, useState, useContext } from 'react';
 
 const EventContext = createContext();
 
-export const useEventContext = () => useContext(EventContext); // Hook to access context
+export const useEventContext = () => useContext(EventContext); 
 
 export const EventProvider = ({ children }) => {
   const [wordToBeSaved, setWordToBeSaved] = useState(null);
   const [savedWords, setSavedWords] = useState([]);  
+  const [highScoreOne, setHighScoreOne] = useState(0);
 
   const saveWordToProgress = (wordToBeSaved, words, definitions) => {
     if (!savedWords.some(item => item.word === wordToBeSaved)) {
@@ -21,8 +22,14 @@ export const EventProvider = ({ children }) => {
     }
   };
 
+  const manageHighScore = (score) => {
+    if (score > highScoreOne) {
+      setHighScoreOne(score); 
+    }
+  }
+
   return (
-    <EventContext.Provider value={{ wordToBeSaved, setWordToBeSaved, savedWords, saveWordToProgress }}>
+    <EventContext.Provider value={{ wordToBeSaved, setWordToBeSaved, savedWords, saveWordToProgress, highScoreOne, setHighScoreOne, manageHighScore }}>
       {children}
     </EventContext.Provider>
   );
