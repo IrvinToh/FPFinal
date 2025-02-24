@@ -290,7 +290,7 @@ const ClassicThemeOneScreen = ({ navigation }) => {
 
 
     return (
-    <LinearGradient colors={['#ff9a8b', '#ff6a88', '#d9a7c7', '#957DAD']} style={styles.container}>
+    <LinearGradient colors={['#4facfe', '#00f2fe', '#00c6ff', '#0072ff']} style={styles.container}>
         <View style={styles.innerContainer}>
             <Text style={[styles.title, { fontSize: titleFontSize }]}>Animals</Text>
             <Text style={[styles.title, { fontSize: previouslyGuessedWordFontSize }]}> Previously Guessed: </Text>
@@ -361,6 +361,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: 'bold',
+    marginBottom: '4%',
   },
   row: {
     flexDirection: 'row',

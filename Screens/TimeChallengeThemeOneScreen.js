@@ -51,6 +51,12 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
     const upperContainerFontSize = width * 0.05;
     const subsetContainerWidth = width * 0.375;
     const subsetContainerHeight = height * 0.1;
+    const roundOverPanelWidth = width * 0.7;
+    const roundOverPanelHeight = height * 0.4;
+    const roundOverPanelTextSizeMain = width * 0.1;
+    const roundOverPanelTextSize = width * 0.06;
+    const roundOverPanelButtonWidth = width * 0.6;
+    const roundOverPanelButtonHeight = height * 0.05;
 
 
     //resets the states to prepare for a new round
@@ -376,12 +382,12 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
 
         {roundOver && (
           <View style = {styles.roundOverScreenOverlay}>
-            <View style={styles.roundOverPanel}>
-              <Text>Round Over!</Text>
-              <Text>Current score: {score}</Text>
-              <Text>High score: {highScoreOne}</Text>
-              <TouchableOpacity onPress={() => startRound()}><Text>Try again</Text></TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate('TimeChallengeScreen')}><Text>Return</Text></TouchableOpacity>
+            <View style={[styles.roundOverPanel, {height: roundOverPanelHeight}, {width:  roundOverPanelWidth}]}>
+              <Text style={[styles.roundOverPanelText, {fontSize:roundOverPanelTextSizeMain}]}>Round Over!</Text>
+              <Text style={[styles.roundOverPanelText, {fontSize:roundOverPanelTextSize}]}>Current score: {score}</Text>
+              <Text style={[styles.roundOverPanelText, {fontSize:roundOverPanelTextSize}]}>High score: {highScoreOne}</Text>
+              <TouchableOpacity  style={[styles.roundOverButton, {height: roundOverPanelButtonHeight}, {width: roundOverPanelButtonWidth}]} onPress={() => startRound()}><Text style={styles.roundOverPanelText}>Try again</Text></TouchableOpacity>
+              <TouchableOpacity style={[styles.roundOverButton, {height: roundOverPanelButtonHeight}, {width: roundOverPanelButtonWidth}]} onPress={() => navigation.navigate('TimeChallengeScreen')}><Text style={styles.roundOverPanelText}>Return</Text></TouchableOpacity>
             </View>
           </View>
         )}
@@ -489,11 +495,23 @@ const styles = StyleSheet.create({
       alignItems: 'center',
     },
     roundOverPanel: {
-      backgroundColor: 'white',
+      backgroundColor: '#5a4dbd',
       padding: 20,
       borderRadius: 10,
       alignItems: 'center',
     },
+    roundOverPanelText: {
+      fontWeight: 'bold',
+    },
+    roundOverButton: {
+      borderWidth: 5,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 5,
+      marginTop: '5%',
+    },
+
 
   
   });
