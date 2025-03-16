@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet,TouchableOpacity, Dimensions, Alert, Touchable } from 'react-native';
+import { View, Text, StyleSheet,TouchableOpacity, Dimensions, Alert, Modal } from 'react-native';
 import { useEventContext } from '../EventContext';
 
 const { width, height } = Dimensions.get('window');
@@ -25,7 +25,8 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
     const [score, setScore] = useState(0);
     const [startRoundButtonIsVisible, setStartRoundButtonIsVisible] = useState(true);
     const [roundOver, setRoundOver] = useState(false);
-
+    const [countDownModalIsVisible, setCountDownModalIsVisible] = useState(true);
+    const [countDown, setCountDown] = useState(5);
     //responsive sizes
     const titleFontSize = width * 0.1;
     const previouslyGuessedWordFontSize = width * 0.05;
@@ -98,6 +99,20 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
         }
         return wordSplited.join('');
     }
+
+    useEffect(() => {
+      if(countDownModalIsVisible && countDown > 0) {
+        const countDownInt = setInterval(() => {
+          setCountDown((prevCount) => prevCount - 1);
+        }, 1000);
+    
+        return () => clearInterval(countDownInt);
+      } else if (countDown === 0) {
+        setCountDownModalIsVisible(false);
+        startRound();
+      }
+    }, [countDown, countDownModalIsVisible]); 
+    
 
     useEffect(() => {
       if(round) {
@@ -325,26 +340,31 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
 
 
     return (
-    <LinearGradient colors={['#ff9a8b', '#ff6a88', '#d9a7c7', '#957DAD']} style={styles.container}>
+    <LinearGradient colors={['#4facfe', '#00f2fe', '#00c6ff', '#0072ff']} style={styles.container}>
+      <Modal 
+        visible = {countDownModalIsVisible}
+        transparent = {true}
+        animationType="fade"
+        onRequestClose={() => setCountDownModalIsVisible(false)}
+      >
+        <View style={styles.countDownModalContainer}>
+          <Text style={styles.countDownText}>{countDown}</Text>
+        </View>
+      </Modal>
       <View style={styles.innerContainer}>
         <Text style={[styles.title, { fontSize: titleFontSize }]}>Theme One</Text>
-        {startRoundButtonIsVisible && (
-          <TouchableOpacity style={[styles.startRoundButton, {height: getNextWordButtonHeight}, {width:getNextWordButtonWidth}]} onPress={startRound}>
-            <Text>Start Round</Text>
-          </TouchableOpacity>
-        )}
         <View style={styles.upperContainer}>
           <View style={[styles.leftSubsetContainer, {width:subsetContainerWidth}, {height:subsetContainerHeight}]}>
-            <Text style={{fontSize: upperContainerFontSize}}>Timer: {timer}s</Text>
+            <Text style={{fontSize: upperContainerFontSize}}>⏰ {timer}s</Text>
           </View>
           <View style={[styles.rightSubsetContainer, {width:subsetContainerWidth}, {height:subsetContainerHeight}]}>
-            <Text style={{fontSize: upperContainerFontSize}}>Lives: {lives}</Text>
+            <Text style={{fontSize: upperContainerFontSize}}>❤️ {lives}</Text>
             <Text style={{fontSize: upperContainerFontSize}}>Score: {score}</Text>
           </View> 
         </View>
         <View style={styles.scrambledWordContainer}>
-          <Text style={{fontSize:jumbledWordFontSize}}>Unscramble this word</Text>
-          <Text style={{fontSize:jumbledWordFontSize}}>{jumbledWord}</Text>
+          <Text style={[{fontSize:jumbledWordFontSize}, {color: 'white'}]}>Unscramble this word</Text>
+          <Text style={[{fontSize:jumbledWordFontSize}, {color: 'white'}]}>{jumbledWord}</Text>
         </View>
         <View style={styles.row} data-testid="feedback-row">
             {Array.from({ length: lengthOfWordToBeGuessed }, (_, index) => (
@@ -456,15 +476,25 @@ const styles = StyleSheet.create({
     },
     upperContainer: {
       flexDirection: 'row',
-      flex: 1,
-      justifyContent: 'Space-between',
+      borderWidth: 2,
+      padding: 10,
+      width: width * 0.95,
+      height: height * 0.15,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#360c85',
+      marginTop: 20,
     },
     leftSubsetContainer: {
       borderWidth: 2,
       padding: 5,
       justifyContent: 'center',
       alignItems: 'center',
-      marginRight: '5%',
+      marginRight: 20,
+      flex:1,
+      borderRadius: 20,
+      backgroundColor: 'white',
     },
     rightSubsetContainer: {
       flexDirection: 'column',
@@ -472,11 +502,20 @@ const styles = StyleSheet.create({
       padding: 5,
       justifyContent: 'center',
       alignItems: 'center',
+      flex:1,
+      borderRadius: 20,
+      backgroundColor: 'white',
     },
     scrambledWordContainer: {
       alignItems: 'center',
       justifyContent: 'center',
-      marginTop: '25%',
+      marginTop: 5,
+      borderWidth: 2,
+      borderRadius: 20,
+      width: width * 0.95,
+      height: height * 0.1,
+      backgroundColor: '#360c85',
+      
     },
     startRoundButton: {
       alignItems: 'center',
@@ -493,6 +532,7 @@ const styles = StyleSheet.create({
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
       justifyContent: 'center',
       alignItems: 'center',
+      height: height,
     },
     roundOverPanel: {
       backgroundColor: '#5a4dbd',
@@ -511,6 +551,17 @@ const styles = StyleSheet.create({
       padding: 5,
       marginTop: '5%',
     },
+    countDownModalContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0,0,0,0.5)'
+    },
+    countDownText: {
+      fontSize: width * 0.3,
+      color: 'black',
+      fontWeight: 'bold',
+    }
 
 
   

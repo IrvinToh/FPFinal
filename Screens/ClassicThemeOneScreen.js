@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet,TouchableOpacity, Dimensions, Alert } from 'react-native';
+import { View, Text, StyleSheet,TouchableOpacity, Dimensions, Alert, Animated } from 'react-native';
 import { useEventContext } from '../EventContext';
 
 const { width, height } = Dimensions.get('window');
@@ -31,29 +31,30 @@ const ClassicThemeOneScreen = ({ navigation }) => {
     const [wrongLettersGuessed, setWrongLettersGuessed] = useState([]);
     const [previousWordGuessed, setPreviousWordGuessed] = useState('Guess a word!');
     const [hint, setHint] = useState('');
+    const [optionsMenuVisibility, setOptionsMenuVisibility] = useState(false);
+    const [optionsMenuAnimation] = useState(new Animated.Value(0));
+    const [currentDescription, setCurrentDescription] = useState('');
 
 
     //responsive sizes
-    const titleFontSize = width * 0.1;
+    const titleFontSize = width * 0.08;
+    const themeFontSize = width * 0.08;
     const previouslyGuessedWordFontSize = width * 0.05;
-    const buttonTextFontSize = width * 0.06;
-    const cellWidth = width * 0.1;
+    const cellWidth = width * 0.09;
     const cellHeight = height * 0.06;
     const cellTextSize = width * 0.06;
-    const getNextWordButtonWidth = width * 0.8;
-    const getNextWordButtonHeight = height * 0.04;
-    const guessButtonWidth = width * 0.39;
-    const guessButtonHeight = height * 0.04;
-    const guessButtonMarginTop = height * 0.045;
-    const GuessButtonMargin = width * 0.01
     const keyboardMarginTop = height * 0.03;
     const keyWidth = width * 0.09;
     const keyHeight = height * 0.07;
     const keyTextSize = width * 0.06;
-    const backspaceKeyWidth = width * 0.13;
+    const keyboardWidth = width * 0.95;
+    const keyboardHeight = height * 0.27;
+    const backspaceKeyWidth = width * 0.2;
     const returnToClassicThemesButtonWidth = width * 0.94;
     const returnToClassicThemesButtonHeight = height * 0.05;
     const returnToClassicThemesButtonMarginTop = height * 0.01;
+    const cellRowWidth = width * 0.95;
+    const cellRowHeight = height * 0.08;
 
     //to pick a word from the list of words to be guessed
     const getRandomWord = () => {
@@ -64,8 +65,26 @@ const ClassicThemeOneScreen = ({ navigation }) => {
         const newWord = getRandomWord();
         setCurrentWordToBeGuessed(newWord);
         setLengthOfWordToBeGuessed(newWord.length);
+        getCurrentDescription(newWord);
         
-      }, []); 
+    }, []); 
+
+    const toggleOptionsMenuVisibility = () => {
+      if (optionsMenuVisibility) {
+        Animated.timing(optionsMenuAnimation, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      } else {
+        Animated.timing(optionsMenuAnimation, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      }
+      setOptionsMenuVisibility(!optionsMenuVisibility);
+    }
 
     //Determines whether the players got their guesses right
     const handleGuess = () => {
@@ -119,12 +138,7 @@ const ClassicThemeOneScreen = ({ navigation }) => {
         }
     };
 
-    
-
-    //function for clearing the player's guess
-    const clearGuess = () => {
-        setPlayerGuess('');
-    };
+  
 
     //to pick a new word from the list of words to be guessed
     const getNextWord = () => {
@@ -143,6 +157,11 @@ const ClassicThemeOneScreen = ({ navigation }) => {
         setCurrentWordToBeGuessed(newWord);
         setLengthOfWordToBeGuessed(newWord.length);
         setWrongLettersGuessed([]);
+        if(optionsMenuVisibility)
+        {
+          toggleOptionsMenuVisibility();
+        }
+        getCurrentDescription();
     };
 
   //assigns colour to the cells depending on the letters in it
@@ -214,6 +233,12 @@ const ClassicThemeOneScreen = ({ navigation }) => {
     )
   }
 
+  const getCurrentDescription = (currentWord) => {
+    let currentWordIndex = words.indexOf(currentWord);
+    let getCurrentDescription = definitions[currentWordIndex];
+    setCurrentDescription(getCurrentDescription);
+  }
+
   //handles the logic for the on screen keyboard
   const handleKeyPressInOnScreenKeyboard = (key) => {
     if (key === 'backspace') {
@@ -228,6 +253,11 @@ const ClassicThemeOneScreen = ({ navigation }) => {
   useEffect(() => {
     currentWordRef.current = currentWordToBeGuessed;  
   }, [currentWordToBeGuessed]);
+
+  useEffect(() => {
+
+    getCurrentDescription(currentWordToBeGuessed);
+  }, [currentWordToBeGuessed]); 
 
   //function to expose the word for testing purposes
   const getCurrentWord = () => {
@@ -249,7 +279,7 @@ const ClassicThemeOneScreen = ({ navigation }) => {
     ];
 
     return (
-      <View style={[styles.keyboard, {marginTop: keyboardMarginTop}]}  testID="keyboard" >
+      <View style={[styles.keyboard, {marginTop: keyboardMarginTop}, {height: keyboardHeight}, {width: keyboardWidth}]}  testID="keyboard" >
         {rows.map((row, rowIndex) => (
           <View key={rowIndex} style={styles.keyboardRow}>
             {row.map((letter) => (
@@ -292,51 +322,86 @@ const ClassicThemeOneScreen = ({ navigation }) => {
     return (
     <LinearGradient colors={['#4facfe', '#00f2fe', '#00c6ff', '#0072ff']} style={styles.container}>
         <View style={styles.innerContainer}>
-            <Text style={[styles.title, { fontSize: titleFontSize }]}>Animals</Text>
-            <Text style={[styles.title, { fontSize: previouslyGuessedWordFontSize }]}> Previously Guessed: </Text>
-            <Text style={[styles.title, { fontSize: previouslyGuessedWordFontSize }]}> {previousWordGuessed}</Text>
-            <View style={styles.row} data-testid="feedback-row">
-                {Array.from({ length: lengthOfWordToBeGuessed }, (_, index) => (
-                <View
-                    key={index}
-                    style={[
-                        styles.cell,
-                        colouredFeedback[index] && { backgroundColor: colouredFeedback[index] },
-                        {width: cellWidth},
-                        {height: cellHeight},
-                    ]}
-                    testID={'feedback-cell'}
-                >
-                    <Text style={{fontSize: cellTextSize}}>
-                        {playerGuess[index] || ''} {/* Show guessed letters */}
-                    </Text>
+          <View style={styles.topContainer}>
+            <View style={styles.innerTopContainer}>
+              <View style={styles.topRightOuterContainer}>
+                <View style={styles.topLeftContainer}>
+                  <Text style={[styles.title, { fontSize: themeFontSize }, {color: 'white'}]}>Theme</Text>
                 </View>
-                ))}
-            </View>
-            <TouchableOpacity style={[styles.submitButton, {height: getNextWordButtonHeight}, {width: getNextWordButtonWidth}]} onPress={getNextWord} testID="get-next-word-button">
-                <Text>Get Next Word</Text>
+                <View style={styles.topLeftContainer}>
+                  <Text style={[styles.title, { fontSize: previouslyGuessedWordFontSize }, {color: 'white'}]}> Previously Guessed </Text>
+                </View>
+              </View>
+              <View style={styles.topRightOuterContainer}>
+                <View style={styles.topRightContainer}>
+                  <Text style={[styles.title, { fontSize: titleFontSize }]}>Animals</Text>
+                </View>
+                <View style={styles.topRightContainer}>
+                  <Text style={[styles.title, { fontSize: previouslyGuessedWordFontSize }]}> {previousWordGuessed}</Text>
+                </View>
+              </View>
+            </View> 
+            <View style={styles.descriptionContainer}><Text style={styles.descriptionText}>{currentDescription}</Text></View> 
+          </View>
+          <View style={[styles.row, {width: cellRowWidth}, {height: cellRowHeight}]} data-testid="feedback-row">
+              {Array.from({ length: lengthOfWordToBeGuessed }, (_, index) => (
+              <View
+                  key={index}
+                  style={[
+                      styles.cell,
+                      colouredFeedback[index] && { backgroundColor: colouredFeedback[index] },
+                      {width: cellWidth},
+                      {height: cellHeight},
+                  ]}
+                  testID={'feedback-cell'}
+              >
+                  <Text style={{fontSize: cellTextSize}}>
+                      {playerGuess[index] || ''} {/* Show guessed letters */}
+                  </Text>
+              </View>
+              ))}
+          </View>
+          <View style={styles.secondContainer}>
+            <TouchableOpacity style={styles.guessButton} onPress={handleGuess} testID="guess-button">
+              <Text style={styles.buttonText}>Guess</Text>
+            </TouchableOpacity> 
+            <TouchableOpacity style={styles.guessButton} onPress={toggleOptionsMenuVisibility} testID="guess-button">
+              <Text style={styles.buttonText}>Options ⚙️</Text>
+            </TouchableOpacity> 
+          </View>
+
+          <Animated.View style={[
+            styles.optionsContainer,
+            {
+              transform: [
+                {
+                  translateY: optionsMenuAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [800, 0], 
+                  }),
+                },
+              ],
+            },
+          ]}>
+            <TouchableOpacity style={styles.optionsButton} onPress={getNextWord} testID="get-next-word-button">
+              <Text style={styles.buttonText}>Skip ⏭️</Text>
             </TouchableOpacity>
-            <View style={[styles.secondContainer, {marginTop: guessButtonMarginTop}]}>
-              <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={handleGuess} testID="guess-button">
-                  <Text>Guess</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={clearGuess} testID="clear-guess-button">
-                  <Text>Clear Guess</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={[styles.secondContainer, {marginTop: guessButtonMarginTop}]}>
-              <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={getHint} testID="get-hint-button">
-                  <Text>Hint</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={getAnswer} testID="reveal-ans-button">
-                  <Text>Reveal Answer</Text>
-              </TouchableOpacity>
-            </View>
-            <OnScreenKeyboard/>
-            <TouchableOpacity style={[styles.guessButton, {height: returnToClassicThemesButtonHeight}, {width: returnToClassicThemesButtonWidth}, {marginTop: returnToClassicThemesButtonMarginTop}]} onPress={() => navigation.navigate('ClassicScreen')}>
-              <Text>Return to classic Themes</Text>
+            <TouchableOpacity style={styles.optionsButton} onPress={getHint} testID="get-hint-button">
+              <Text style={styles.buttonText}>Hint💡</Text>
             </TouchableOpacity>
-        </View>
+            <TouchableOpacity style={styles.optionsButton} onPress={getAnswer} testID="reveal-ans-button">
+              <Text style={styles.buttonText}>Reveal Answer 📜</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.optionsButton} onPress={toggleOptionsMenuVisibility} testID="reveal-ans-button">
+              <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+          </Animated.View>
+          
+          <OnScreenKeyboard/>
+          <TouchableOpacity style={[styles.guessButton, {height: returnToClassicThemesButtonHeight}, {width: returnToClassicThemesButtonWidth}, {marginTop: returnToClassicThemesButtonMarginTop}]} onPress={() => navigation.navigate('ClassicScreen')}>
+            <Text style={styles.buttonText}>Return</Text>
+          </TouchableOpacity>
+      </View>
     </LinearGradient>
     );
 };
@@ -353,42 +418,132 @@ const styles = StyleSheet.create({
     width: '100%', 
     paddingHorizontal: 20, 
   },
+  topContainer: {
+    flexDirection: 'column',
+    backgroundColor: '#360c85',
+    borderWidth: 1,
+    padding: 20,
+    borderRadius: 20,
+    width: width * 0.95,
+    height: height * 0.4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  innerTopContainer: {
+    flexDirection: 'row',
+    
+    
+  },
+  topLeftContainer: {
+    borderRadius: 20,
+    padding: 10,
+    marginBottom: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: '35%',
+  },
+  topRightContainer: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 10, 
+    marginBottom: 10,
+    width: '100%',
+    height: '35%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+  },
+  topRightOuterContainer: {
+    flex: 'column',
+    alignItems: 'center', 
+    justifyContent: 'center',
+  },
   secondContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
+    marginTop: 50,
+
+  },
+  optionsContainer: {
+    position: 'absolute',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    padding: 20,
+    borderRadius: 20,
+    shadowColor: 'black',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 5,
+    zIndex: 1,
+    width: '90%',
+    alignItems: 'center',
+    top: height * 0.2,
+    left: width * 0.1,
+    right: width * 0.1,
+    width: width * 0.8,
+
   },
   title: {
     fontWeight: 'bold',
-    marginBottom: '4%',
   },
   row: {
     flexDirection: 'row',
-    margin: 5,
+    margin: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderRadius: 20,
+    backgroundColor: '#360c85',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   cell: {
-    borderWidth: 1,
-    borderColor: '#000',
+    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
+    margin: 2,
+    borderRadius: 15,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
 
-  },
-  submitButton: {
-    alignItems: 'center', 
-    borderWidth: 1,
-    justifyContent: 'center',
   },
   guessButton: {
     alignItems: 'center', 
     borderWidth: 1,
     justifyContent: 'center',
+    borderRadius: 20,
+    backgroundColor: '#360c85',
+    marginBottom: 30,
+    height: height * 0.06,
+    width: width * 0.45,
+    padding: 5,
+  },
+  optionsButton: {
+    alignItems: 'center', 
+    borderWidth: 1,
+    justifyContent: 'center',
+    borderRadius: 20,
+    backgroundColor: '#360c85',
+    marginBottom: 30,
+    height: height * 0.06,
+    width: width * 0.6,
+    padding: 5,
   },
   keyboard: {
     flexDirection: 'column',
     justifyContent: 'center',
     borderWidth: 1,
     padding: 5,
+    borderRadius: 20,
+    backgroundColor: '#360c85',
   },
   keyboardRow: {
     flexDirection: 'row',
@@ -399,6 +554,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
+    borderRadius:15,
+    backgroundColor: 'white',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: width * 0.06,
+    
+  },
+  descriptionContainer: {
+    borderRadius: 20,
+    backgroundColor: 'white',
+    width: '100%',
+    height: '30%',
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  descriptionText: {
+    fontSize: width * 0.04,
+    fontWeight: 'bold',
   },
 
 });
