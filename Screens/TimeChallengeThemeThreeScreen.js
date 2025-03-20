@@ -1,12 +1,13 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet,TouchableOpacity, Dimensions, Alert } from 'react-native';
+import { View, Text, StyleSheet,TouchableOpacity, Dimensions, Alert, Modal } from 'react-native';
+import { useEventContext } from '../EventContext';
 
 const { width, height } = Dimensions.get('window');
 const words = ['yank', 'mother', 'bravo', 'oompaa']; // A list of words to be guessed
 
 const TimeChallengeThemeThreeScreen = ({ navigation }) => {
-
+    const { highScoreOne, manageHighScore} = useEventContext();
 
     //use states
     const [playerGuess, setPlayerGuess] = useState('');
@@ -22,27 +23,21 @@ const TimeChallengeThemeThreeScreen = ({ navigation }) => {
     const [lives, setLives] = useState(5);
     const [round, setRound] = useState(false);
     const [score, setScore] = useState(0);
-    const [highScore, sethighScore] = useState(0);
     const [startRoundButtonIsVisible, setStartRoundButtonIsVisible] = useState(true);
-
+    const [roundOver, setRoundOver] = useState(false);
+    const [countDownModalIsVisible, setCountDownModalIsVisible] = useState(true);
+    const [countDown, setCountDown] = useState(5);
     //responsive sizes
     const titleFontSize = width * 0.1;
-    const previouslyGuessedWordFontSize = width * 0.05;
-    const buttonTextFontSize = width * 0.06;
+
     const cellWidth = width * 0.1;
     const cellHeight = height * 0.06;
     const cellTextSize = width * 0.06;
-    const getNextWordButtonWidth = width * 0.8;
-    const getNextWordButtonHeight = height * 0.04;
-    const guessButtonWidth = width * 0.39;
-    const guessButtonHeight = height * 0.04;
     const guessButtonMarginTop = height * 0.045;
-    const GuessButtonMargin = width * 0.01
     const keyboardMarginTop = height * 0.03;
-    const keyWidth = width * 0.09;
-    const keyHeight = height * 0.07;
+    const keyHeight = height * 0.08;
     const keyTextSize = width * 0.06;
-    const backspaceKeyWidth = width * 0.13;
+    const backspaceKeyWidth = width * 0.2;
     const returnToClassicThemesButtonWidth = width * 0.94;
     const returnToClassicThemesButtonHeight = height * 0.05;
     const returnToClassicThemesButtonMarginTop = height * 0.01;
@@ -50,6 +45,12 @@ const TimeChallengeThemeThreeScreen = ({ navigation }) => {
     const upperContainerFontSize = width * 0.05;
     const subsetContainerWidth = width * 0.375;
     const subsetContainerHeight = height * 0.1;
+    const roundOverPanelWidth = width * 0.7;
+    const roundOverPanelHeight = height * 0.4;
+    const roundOverPanelTextSizeMain = width * 0.1;
+    const roundOverPanelTextSize = width * 0.06;
+    const roundOverPanelButtonWidth = width * 0.6;
+    const roundOverPanelButtonHeight = height * 0.05;
 
 
     //resets the states to prepare for a new round
@@ -59,11 +60,12 @@ const TimeChallengeThemeThreeScreen = ({ navigation }) => {
       setColouredFeedback(['', '', '', '', '']);
       setMessage('');
       setWordGuessedCorrectly(false);
-      setLives(5); // Reset lives on start
-      setTimer(60); // Reset timer on start
+      setLives(5); 
+      setTimer(60); 
       setTimerStatus(true);
       setScore(0);
       setStartRoundButtonIsVisible(false);
+      setRoundOver(false);
       
     }
 
@@ -71,8 +73,9 @@ const TimeChallengeThemeThreeScreen = ({ navigation }) => {
     const endRound = () => {
       setRound(false);
       setTimerStatus(false);
-      setMessage('Round over!');
       setJumbledWord('');
+      setRoundOver(true);
+
     }
 
     //to pick a word from the list of words to be guessed
@@ -89,6 +92,20 @@ const TimeChallengeThemeThreeScreen = ({ navigation }) => {
         }
         return wordSplited.join('');
     }
+
+    useEffect(() => {
+      if(countDownModalIsVisible && countDown > 0) {
+        const countDownInt = setInterval(() => {
+          setCountDown((prevCount) => prevCount - 1);
+        }, 1000);
+    
+        return () => clearInterval(countDownInt);
+      } else if (countDown === 0) {
+        setCountDownModalIsVisible(false);
+        startRound();
+      }
+    }, [countDown, countDownModalIsVisible]); 
+    
 
     useEffect(() => {
       if(round) {
@@ -120,6 +137,10 @@ const TimeChallengeThemeThreeScreen = ({ navigation }) => {
         endRound();
       }
     }, [lives]); 
+
+    useEffect(() => {
+      manageHighScore(score);
+    }, [score]);
 
     //Determines whether the players got their guesses right
     const handleGuess = () => {
@@ -156,6 +177,7 @@ const TimeChallengeThemeThreeScreen = ({ navigation }) => {
                 ],
                 {cancelable: true}
               )
+              setLives(previousLives => previousLives -1);
             }
         } else {
           //If length of playerGuess does not match length of current word to be guessed
@@ -186,6 +208,7 @@ const TimeChallengeThemeThreeScreen = ({ navigation }) => {
         { 
           newWord = getRandomWord(); 
         }
+        let newJumbledWord = jumbleWords(newWord);
         setWordGuessedCorrectly(false);
         setPlayerGuess('');
         setColouredFeedback('');
@@ -193,6 +216,7 @@ const TimeChallengeThemeThreeScreen = ({ navigation }) => {
         setCurrentWordToBeGuessed(newWord);
         setLengthOfWordToBeGuessed(newWord.length);
         setWrongLettersGuessed([]);
+        setJumbledWord(newJumbledWord);
     }
 
   //assigns colour to the cells depending on the letters in it
@@ -230,7 +254,6 @@ const TimeChallengeThemeThreeScreen = ({ navigation }) => {
   
     return overallColourFeedback;
   };
-
   
 
 
@@ -278,8 +301,6 @@ const TimeChallengeThemeThreeScreen = ({ navigation }) => {
                 onPress={() => handleKeyPressInOnScreenKeyboard(letter)}
                 style={[
                   styles.key,
-                  {width: keyWidth},
-                  {height: keyHeight},
                   wrongLettersGuessed.includes(letter) && { backgroundColor: 'red' },
                 ]}
                 disabled={wrongLettersGuessed.includes(letter)}
@@ -310,26 +331,31 @@ const TimeChallengeThemeThreeScreen = ({ navigation }) => {
 
 
     return (
-    <LinearGradient colors={['#ff9a8b', '#ff6a88', '#d9a7c7', '#957DAD']} style={styles.container}>
+    <LinearGradient colors={['#4facfe', '#00f2fe', '#00c6ff', '#0072ff']} style={styles.container}>
+      <Modal 
+        visible = {countDownModalIsVisible}
+        transparent = {true}
+        animationType="fade"
+        onRequestClose={() => setCountDownModalIsVisible(false)}
+      >
+        <View style={styles.countDownModalContainer}>
+          <Text style={styles.countDownText}>{countDown}</Text>
+        </View>
+      </Modal>
       <View style={styles.innerContainer}>
         <Text style={[styles.title, { fontSize: titleFontSize }]}>Theme One</Text>
-        {startRoundButtonIsVisible && (
-          <TouchableOpacity style={[styles.startRoundButton, {height: getNextWordButtonHeight}, {width:getNextWordButtonWidth}]} onPress={startRound}>
-            <Text>Start Round</Text>
-          </TouchableOpacity>
-        )}
         <View style={styles.upperContainer}>
           <View style={[styles.leftSubsetContainer, {width:subsetContainerWidth}, {height:subsetContainerHeight}]}>
-            <Text style={{fontSize: upperContainerFontSize}}>Timer: {timer}s</Text>
+            <Text style={{fontSize: upperContainerFontSize}}>⏰ {timer}s</Text>
           </View>
           <View style={[styles.rightSubsetContainer, {width:subsetContainerWidth}, {height:subsetContainerHeight}]}>
-            <Text style={{fontSize: upperContainerFontSize}}>Lives: {lives}</Text>
+            <Text style={{fontSize: upperContainerFontSize}}>❤️ {lives}</Text>
             <Text style={{fontSize: upperContainerFontSize}}>Score: {score}</Text>
           </View> 
         </View>
         <View style={styles.scrambledWordContainer}>
-          <Text style={{fontSize:jumbledWordFontSize}}>Unscramble this word</Text>
-          <Text style={{fontSize:jumbledWordFontSize}}>{jumbledWord}</Text>
+          <Text style={[{fontSize:jumbledWordFontSize}, {color: 'white'}]}>Unscramble this word</Text>
+          <Text style={[{fontSize:jumbledWordFontSize}, {color: 'white'}]}>{jumbledWord}</Text>
         </View>
         <View style={styles.row} data-testid="feedback-row">
             {Array.from({ length: lengthOfWordToBeGuessed }, (_, index) => (
@@ -349,21 +375,35 @@ const TimeChallengeThemeThreeScreen = ({ navigation }) => {
             </View>
             ))}
         </View>
-        <TouchableOpacity style={[styles.submitButton, {height: getNextWordButtonHeight}, {width: getNextWordButtonWidth}]} onPress={getNextWord} testID="get-next-word-button">
-            <Text>Get Next Word</Text>
+        <TouchableOpacity style={styles.submitButton} onPress={getNextWord} testID="get-next-word-button">
+          <Text style={[{color:'white'}, {fontSize: width * 0.05}]}>Skip</Text>
         </TouchableOpacity>
-        <View style={[styles.secondContainer, {marginTop: guessButtonMarginTop}]}>
-          <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={handleGuess} testID="guess-button">
-              <Text>Guess</Text>
+        <View style={styles.secondContainer}>
+          <TouchableOpacity style={styles.guessButton} onPress={handleGuess} testID="guess-button">
+            <Text style={styles.guessButtonText}>Guess</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={clearGuess} testID="clear-guess-button">
-              <Text>Clear Guess</Text>
+          <TouchableOpacity style={styles.guessButton} onPress={clearGuess} testID="clear-guess-button">
+            <Text style={styles.guessButtonText}>Clear Guess</Text>
           </TouchableOpacity>
         </View>
         <OnScreenKeyboard/>
         <TouchableOpacity style={[styles.guessButton, {height: returnToClassicThemesButtonHeight}, {width: returnToClassicThemesButtonWidth}, {marginTop: returnToClassicThemesButtonMarginTop}]} onPress={() => navigation.navigate('TimeChallengeScreen')}>
-          <Text>Return to Time Challenge Themes</Text>
+          <Text style={styles.guessButtonText}>Return</Text>
         </TouchableOpacity>
+
+        {roundOver && (
+          <View style = {styles.roundOverScreenOverlay}>
+            <View style={[styles.roundOverPanel, {height: roundOverPanelHeight}, {width:  roundOverPanelWidth}]}>
+              <Text style={[styles.roundOverPanelText, {fontSize:roundOverPanelTextSizeMain}]}>Round Over!</Text>
+              <Text style={[styles.roundOverPanelText, {fontSize:roundOverPanelTextSize}]}>Current Score</Text>
+              <Text style={[styles.roundOverPanelText, {fontSize:roundOverPanelTextSize}]}>{score}</Text>
+              <Text style={[styles.roundOverPanelText, {fontSize:roundOverPanelTextSize}]}>High Score</Text>
+              <Text style={[styles.roundOverPanelText, {fontSize:roundOverPanelTextSize}]}>{highScoreOne}</Text>
+              <TouchableOpacity  style={[styles.roundOverButton, {height: roundOverPanelButtonHeight}, {width: roundOverPanelButtonWidth}]} onPress={() => startRound()}><Text style={styles.roundOverPanelText}>Try again</Text></TouchableOpacity>
+              <TouchableOpacity style={[styles.roundOverButton, {height: roundOverPanelButtonHeight}, {width: roundOverPanelButtonWidth}]} onPress={() => navigation.navigate('TimeChallengeScreen')}><Text style={styles.roundOverPanelText}>Return</Text></TouchableOpacity>
+            </View>
+          </View>
+        )}
       </View>
     </LinearGradient>
     );
@@ -382,10 +422,10 @@ const styles = StyleSheet.create({
       paddingHorizontal: 20, 
     },
     secondContainer: {
-      flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'row',
+      marginTop: 10,
     },
     title: {
       fontWeight: 'bold',
@@ -393,29 +433,56 @@ const styles = StyleSheet.create({
     row: {
       flexDirection: 'row',
       margin: 5,
+      backgroundColor: '#360c85',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: width * 0.95,
+      height: height * 0.08,
+      borderRadius: 20,
+      borderWidth: 2,
     },
     cell: {
       borderWidth: 2,
       borderColor: '#000',
       justifyContent: 'center',
       alignItems: 'center',
+      backgroundColor: 'white',
+      margin: 2,
+      borderRadius: 20,
   
     },
     submitButton: {
       alignItems: 'center', 
       borderWidth: 2,
       justifyContent: 'center',
+      borderRadius: 20,
+      width: width * 0.95,
+      height: height * 0.06,
+      backgroundColor: '#360c85',
     },
     guessButton: {
       alignItems: 'center', 
       borderWidth: 2,
       justifyContent: 'center',
+      borderRadius: 20,
+      width: 0.45 * width,
+      height: 0.05 * height,
+      backgroundColor: '#360c85',
+    },
+    guessButtonText: {
+      color: 'white',
+      fontSize: width * 0.05,
     },
     keyboard: {
       flexDirection: 'column',
       justifyContent: 'center',
       borderWidth: 2,
       padding: 5,
+      backgroundColor: '#360c85',
+      borderRadius: 20,
+      width: width * 0.98,
+      height: 0.3 * height,
+
     },
     keyboardRow: {
       flexDirection: 'row',
@@ -426,18 +493,32 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       borderWidth: 2,
+      width: width * 0.09,
+      height: height * 0.08,
+      backgroundColor: 'white',
+      borderRadius: 20,
     },
     upperContainer: {
       flexDirection: 'row',
-      flex: 1,
-      justifyContent: 'Space-between',
+      borderWidth: 2,
+      padding: 10,
+      width: width * 0.95,
+      height: height * 0.15,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#360c85',
+      marginTop: 20,
     },
     leftSubsetContainer: {
       borderWidth: 2,
       padding: 5,
       justifyContent: 'center',
       alignItems: 'center',
-      marginRight: '5%',
+      marginRight: 20,
+      flex:1,
+      borderRadius: 20,
+      backgroundColor: 'white',
     },
     rightSubsetContainer: {
       flexDirection: 'column',
@@ -445,18 +526,69 @@ const styles = StyleSheet.create({
       padding: 5,
       justifyContent: 'center',
       alignItems: 'center',
+      flex:1,
+      borderRadius: 20,
+      backgroundColor: 'white',
     },
     scrambledWordContainer: {
       alignItems: 'center',
       justifyContent: 'center',
-      marginTop: '25%',
+      marginTop: 5,
+      borderWidth: 2,
+      borderRadius: 20,
+      width: width * 0.95,
+      height: height * 0.1,
+      backgroundColor: '#360c85',
+      
     },
     startRoundButton: {
       alignItems: 'center',
       borderWidth: 2,
       justifyContent: 'center',
       marginBottom: '2%',
+    },
+    roundOverScreenOverlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: height,
+    },
+    roundOverPanel: {
+      backgroundColor: '#5a4dbd',
+      padding: 20,
+      borderRadius: 10,
+      alignItems: 'center',
+      borderWidth: 3,
+    },
+    roundOverPanelText: {
+      fontWeight: 'bold',
+    },
+    roundOverButton: {
+      borderWidth: 5,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 5,
+      marginTop: '5%',
+    },
+    countDownModalContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    countDownText: {
+      fontSize: width * 0.3,
+      color: 'black',
+      fontWeight: 'bold',
     }
+
+
   
   });
 

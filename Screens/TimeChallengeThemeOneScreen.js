@@ -29,22 +29,15 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
     const [countDown, setCountDown] = useState(5);
     //responsive sizes
     const titleFontSize = width * 0.1;
-    const previouslyGuessedWordFontSize = width * 0.05;
-    const buttonTextFontSize = width * 0.06;
+
     const cellWidth = width * 0.1;
     const cellHeight = height * 0.06;
     const cellTextSize = width * 0.06;
-    const getNextWordButtonWidth = width * 0.8;
-    const getNextWordButtonHeight = height * 0.04;
-    const guessButtonWidth = width * 0.39;
-    const guessButtonHeight = height * 0.04;
     const guessButtonMarginTop = height * 0.045;
-    const GuessButtonMargin = width * 0.01
     const keyboardMarginTop = height * 0.03;
-    const keyWidth = width * 0.09;
-    const keyHeight = height * 0.07;
+    const keyHeight = height * 0.08;
     const keyTextSize = width * 0.06;
-    const backspaceKeyWidth = width * 0.13;
+    const backspaceKeyWidth = width * 0.2;
     const returnToClassicThemesButtonWidth = width * 0.94;
     const returnToClassicThemesButtonHeight = height * 0.05;
     const returnToClassicThemesButtonMarginTop = height * 0.01;
@@ -308,8 +301,6 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
                 onPress={() => handleKeyPressInOnScreenKeyboard(letter)}
                 style={[
                   styles.key,
-                  {width: keyWidth},
-                  {height: keyHeight},
                   wrongLettersGuessed.includes(letter) && { backgroundColor: 'red' },
                 ]}
                 disabled={wrongLettersGuessed.includes(letter)}
@@ -384,28 +375,30 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
             </View>
             ))}
         </View>
-        <TouchableOpacity style={[styles.submitButton, {height: getNextWordButtonHeight}, {width: getNextWordButtonWidth}]} onPress={getNextWord} testID="get-next-word-button">
-            <Text>Get Next Word</Text>
+        <TouchableOpacity style={styles.submitButton} onPress={getNextWord} testID="get-next-word-button">
+          <Text style={[{color:'white'}, {fontSize: width * 0.05}]}>Skip</Text>
         </TouchableOpacity>
-        <View style={[styles.secondContainer, {marginTop: guessButtonMarginTop}]}>
-          <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={handleGuess} testID="guess-button">
-              <Text>Guess</Text>
+        <View style={styles.secondContainer}>
+          <TouchableOpacity style={styles.guessButton} onPress={handleGuess} testID="guess-button">
+            <Text style={styles.guessButtonText}>Guess</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.guessButton, {height: guessButtonHeight}, {width: guessButtonWidth}, {margin: GuessButtonMargin}]} onPress={clearGuess} testID="clear-guess-button">
-              <Text>Clear Guess</Text>
+          <TouchableOpacity style={styles.guessButton} onPress={clearGuess} testID="clear-guess-button">
+            <Text style={styles.guessButtonText}>Clear Guess</Text>
           </TouchableOpacity>
         </View>
         <OnScreenKeyboard/>
         <TouchableOpacity style={[styles.guessButton, {height: returnToClassicThemesButtonHeight}, {width: returnToClassicThemesButtonWidth}, {marginTop: returnToClassicThemesButtonMarginTop}]} onPress={() => navigation.navigate('TimeChallengeScreen')}>
-          <Text>Return</Text>
+          <Text style={styles.guessButtonText}>Return</Text>
         </TouchableOpacity>
 
         {roundOver && (
           <View style = {styles.roundOverScreenOverlay}>
             <View style={[styles.roundOverPanel, {height: roundOverPanelHeight}, {width:  roundOverPanelWidth}]}>
               <Text style={[styles.roundOverPanelText, {fontSize:roundOverPanelTextSizeMain}]}>Round Over!</Text>
-              <Text style={[styles.roundOverPanelText, {fontSize:roundOverPanelTextSize}]}>Current score: {score}</Text>
-              <Text style={[styles.roundOverPanelText, {fontSize:roundOverPanelTextSize}]}>High score: {highScoreOne}</Text>
+              <Text style={[styles.roundOverPanelText, {fontSize:roundOverPanelTextSize}]}>Current Score</Text>
+              <Text style={[styles.roundOverPanelText, {fontSize:roundOverPanelTextSize}]}>{score}</Text>
+              <Text style={[styles.roundOverPanelText, {fontSize:roundOverPanelTextSize}]}>High Score</Text>
+              <Text style={[styles.roundOverPanelText, {fontSize:roundOverPanelTextSize}]}>{highScoreOne}</Text>
               <TouchableOpacity  style={[styles.roundOverButton, {height: roundOverPanelButtonHeight}, {width: roundOverPanelButtonWidth}]} onPress={() => startRound()}><Text style={styles.roundOverPanelText}>Try again</Text></TouchableOpacity>
               <TouchableOpacity style={[styles.roundOverButton, {height: roundOverPanelButtonHeight}, {width: roundOverPanelButtonWidth}]} onPress={() => navigation.navigate('TimeChallengeScreen')}><Text style={styles.roundOverPanelText}>Return</Text></TouchableOpacity>
             </View>
@@ -429,10 +422,10 @@ const styles = StyleSheet.create({
       paddingHorizontal: 20, 
     },
     secondContainer: {
-      flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'row',
+      marginTop: 10,
     },
     title: {
       fontWeight: 'bold',
@@ -440,29 +433,56 @@ const styles = StyleSheet.create({
     row: {
       flexDirection: 'row',
       margin: 5,
+      backgroundColor: '#360c85',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: width * 0.95,
+      height: height * 0.08,
+      borderRadius: 20,
+      borderWidth: 2,
     },
     cell: {
       borderWidth: 2,
       borderColor: '#000',
       justifyContent: 'center',
       alignItems: 'center',
+      backgroundColor: 'white',
+      margin: 2,
+      borderRadius: 20,
   
     },
     submitButton: {
       alignItems: 'center', 
       borderWidth: 2,
       justifyContent: 'center',
+      borderRadius: 20,
+      width: width * 0.95,
+      height: height * 0.06,
+      backgroundColor: '#360c85',
     },
     guessButton: {
       alignItems: 'center', 
       borderWidth: 2,
       justifyContent: 'center',
+      borderRadius: 20,
+      width: 0.45 * width,
+      height: 0.05 * height,
+      backgroundColor: '#360c85',
+    },
+    guessButtonText: {
+      color: 'white',
+      fontSize: width * 0.05,
     },
     keyboard: {
       flexDirection: 'column',
       justifyContent: 'center',
       borderWidth: 2,
       padding: 5,
+      backgroundColor: '#360c85',
+      borderRadius: 20,
+      width: width * 0.98,
+      height: 0.3 * height,
+
     },
     keyboardRow: {
       flexDirection: 'row',
@@ -473,6 +493,10 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       borderWidth: 2,
+      width: width * 0.09,
+      height: height * 0.08,
+      backgroundColor: 'white',
+      borderRadius: 20,
     },
     upperContainer: {
       flexDirection: 'row',
@@ -539,6 +563,7 @@ const styles = StyleSheet.create({
       padding: 20,
       borderRadius: 10,
       alignItems: 'center',
+      borderWidth: 3,
     },
     roundOverPanelText: {
       fontWeight: 'bold',
@@ -555,7 +580,7 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(0,0,0,0.5)'
+      backgroundColor: 'rgba(0,0,0,0.5)',
     },
     countDownText: {
       fontSize: width * 0.3,
