@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet,TouchableOpacity, Dimensions, ScrollView, Alert } from 'react-native';
 import { useEffect } from 'react';
 import { useEventContext } from '../EventContext';
+import { ProgressBar } from 'react-native-paper';
 const { width, height } = Dimensions.get('window');
 
 const words = ['giraffe', 'elephant','chameleon', 'rabbit', 'panda', 'whale', 'bear', 'cheetah', 'lion', 'tiger']; // A list of words to be guessed
@@ -52,7 +53,7 @@ const ProgressionScreen = ({ navigation }) => {
 
   //Responsive sizes
   const innerContainerWidth = width * 0.9;
-  const innerContainerHeight = height * 0.12;
+  const innerContainerHeight = height * 0.2;
   const progressionFont = width * 0.13;
   const screenPaddingTop = height * 0.1;
   const descriptionTextFont = width * 0.07;
@@ -94,21 +95,43 @@ const ProgressionScreen = ({ navigation }) => {
   const handleInteractedWords = (interactedWord) => {
     setInteractedWords(prevInteractedWord => prevInteractedWord === interactedWord ? null : interactedWord);
   }
+
+  const getProgress = () => {
+    const totalWords = words.length + words2.length + words3.length;
+    const guessedWords = savedWords.length;
+    return guessedWords / totalWords; 
+  };
+
+  const getProgressPercentage = () => {
+    const totalWords = words.length + words2.length + words3.length;
+    const guessedWords = savedWords.length;
+    return (guessedWords / totalWords) * 100;
+  };
+
   
 
 
 
   return (
-    <LinearGradient colors={['#ff9a8b', '#ff6a88', '#d9a7c7', '#957DAD']} style={[styles.container, {paddingTop: screenPaddingTop}]}>
+    <LinearGradient colors={['#4facfe', '#00f2fe', '#00c6ff', '#0072ff']} style={[styles.container, {paddingTop: screenPaddingTop}]}>
       <View style = {[styles.progressContainer, {height: innerContainerHeight}, {width: innerContainerWidth}]}>
         <Text style = {[styles.progressionWord, {fontSize: progressionFont}]}>Progression</Text>
       </View>
-      <View>
-        <Text style={[styles.descriptionText, {fontSize: descriptionTextFont}]}>What you have learned so far!</Text>
+      <View style={styles.secondContainer}>
+        <Text style={[styles.descriptionText, { fontSize: descriptionTextFont }]}>
+          {Math.round(getProgressPercentage()) === 0
+          ? "Start by guessing a word!" 
+          : `You are ${Math.round(getProgressPercentage())}% there!`} 
+        </Text>
+
       </View>
-      <ScrollView style={{ flex: 1 }}>
+      <View>
+        <ProgressBar style={styles.progressBar} progress={getProgress()} color="#360c85" />
+      </View>
+      <ScrollView style={{ flex: 1}}>
+
         {savedWords.map((item, index) => (
-          <TouchableOpacity key={index} onPress={() => handleInteractedWords(item.word)}>
+          <TouchableOpacity style={styles.wordDisplay} key={index} onPress={() => handleInteractedWords(item.word)}>
             <View key={index} style = {[styles.innerContainer, {height: innerContainerHeight}, {width: innerContainerWidth}]}>
               <Text style={interactedWords === item.word ? [{fontSize: definitionTextFont}, styles.wordDefText]: [{fontSize: wordTextFont},  styles.wordDefText]}>{interactedWords === item.word ? item.definition : item.word}</Text>
             </View>
@@ -131,15 +154,19 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     borderWidth: 2,
-    borderRadius: 5,
+    borderRadius: 20,
     marginBottom: 5,
     padding: 5,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#360c85',
+
+  },
+  secondContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   progressContainer: {
-    borderWidth: 2,
-    borderRadius: 5,
     marginBottom: 5,
     padding: 5,
     justifyContent: 'center',
@@ -155,8 +182,22 @@ const styles = StyleSheet.create({
   },
   wordDefText: {
     fontWeight: 'bold',
+    borderWidth: 2,
+    borderRadius: 20,
+    height: height * 0.15, 
+    width: width * 0.8,
+    padding: 5,
+    backgroundColor: 'white',
+
     
-  }
+  },
+  progressBar: {
+    width: width * 0.95,
+    height: height * 0.05,
+    margin: 20,
+    borderRadius: 20,
+    borderWidth: 2,
+  },
 });
 
 export default ProgressionScreen;
