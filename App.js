@@ -1,6 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';  // Import the navigation container
 import { createStackNavigator } from '@react-navigation/stack'; // Import stack navigator
 import MainMenuScreen from './Screens/MainMenuScreen.js'; //import MainMenuScreen
@@ -15,10 +14,33 @@ import TimeChallengeScreen from './Screens/TimeChallengeScreen.js'; //import Tim
 import ProgressionScreen from './Screens/ProgressionScreen.js'; //import ProgressionScreen
 import GuideScreen from './Screens/GuideScreen.js'; //import GuideScreen
 import { EventProvider } from './EventContext';
-
+import React, {useState, useEffect} from 'react';
+import { Audio } from 'expo-av';  // Import Audio from expo-av
 const Stack = createStackNavigator(); //Initalise stack navigator
 
 export default function App() {
+  const [sound, setSound] = useState();
+
+  const playBackgroundMusic = async () => {
+    const { sound } = await Audio.Sound.createAsync(
+      require('./audio/background.wav'), 
+      {
+        shouldPlay: true,  
+        isLooping: true,  
+      }
+    );
+    setSound(sound);
+  };
+
+  // Use useEffect to play background music when the app starts
+  useEffect(() => {
+    playBackgroundMusic();
+
+    return () => {
+      sound?.unloadAsync();  // Unload the sound when the app is closed or the component unmounts
+    };
+  }, []);
+
   return (
     <EventProvider>
       <NavigationContainer>{/* Navigation container that holds all screens */}
