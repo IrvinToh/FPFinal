@@ -4,7 +4,7 @@ import { View, Text, StyleSheet,TouchableOpacity, Dimensions, Alert, Modal } fro
 import { useEventContext } from '../EventContext';
 
 const { width, height } = Dimensions.get('window');
-const words = ['yank', 'mother', 'bravo', 'oompaa']; // A list of words to be guessed
+const words = ['japan', 'china','france', 'mongolia', 'russia', 'india', 'indonesia', 'australia', 'germany', 'italy']; // A list of words to be guessed
 
 const TimeChallengeThemeThreeScreen = ({ navigation }) => {
     const { highScoreOne, manageHighScore} = useEventContext();
@@ -343,7 +343,7 @@ const TimeChallengeThemeThreeScreen = ({ navigation }) => {
         </View>
       </Modal>
       <View style={styles.innerContainer}>
-        <Text style={[styles.title, { fontSize: titleFontSize }]}>Theme One</Text>
+        <Text style={[styles.title, { fontSize: titleFontSize }]}>Countries</Text>
         <View style={styles.upperContainer}>
           <View style={[styles.leftSubsetContainer, {width:subsetContainerWidth}, {height:subsetContainerHeight}]}>
             <Text style={{fontSize: upperContainerFontSize}}>⏰ {timer}s</Text>
@@ -584,7 +584,7 @@ const styles = StyleSheet.create({
     },
     countDownText: {
       fontSize: width * 0.3,
-      color: 'black',
+      color: 'white',
       fontWeight: 'bold',
     }
 

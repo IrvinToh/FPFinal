@@ -259,15 +259,6 @@ const ClassicThemeOneScreen = ({ navigation }) => {
     getCurrentDescription(currentWordToBeGuessed);
   }, [currentWordToBeGuessed]); 
 
-  //function to expose the word for testing purposes
-  const getCurrentWord = () => {
-    return currentWordRef.current; 
-  };
-
-  // Expose this function to tests
-  if (process.env.NODE_ENV === 'test') {
-    window.getCurrentWord = getCurrentWord;  
-  }
 
 
   //function for the layout of the onscreen keyboard

@@ -4,7 +4,7 @@ import { View, Text, StyleSheet,TouchableOpacity, Dimensions, Alert, Modal } fro
 import { useEventContext } from '../EventContext';
 
 const { width, height } = Dimensions.get('window');
-const words = ['yank', 'mother', 'bravo', 'oompaa']; // A list of words to be guessed
+const words = ['giraffe', 'elephant','chameleon', 'rabbit', 'panda', 'whale', 'bear', 'cheetah', 'lion', 'tiger']; // A list of words to be guessed
 
 const TimeChallengeThemeOneScreen = ({ navigation }) => {
     const { highScoreOne, manageHighScore} = useEventContext();
@@ -23,7 +23,6 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
     const [lives, setLives] = useState(5);
     const [round, setRound] = useState(false);
     const [score, setScore] = useState(0);
-    const [startRoundButtonIsVisible, setStartRoundButtonIsVisible] = useState(true);
     const [roundOver, setRoundOver] = useState(false);
     const [countDownModalIsVisible, setCountDownModalIsVisible] = useState(true);
     const [countDown, setCountDown] = useState(5);
@@ -64,7 +63,6 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
       setTimer(60); 
       setTimerStatus(true);
       setScore(0);
-      setStartRoundButtonIsVisible(false);
       setRoundOver(false);
       
     }
@@ -93,6 +91,7 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
         return wordSplited.join('');
     }
 
+    //handles the displaying of the countdown modal
     useEffect(() => {
       if(countDownModalIsVisible && countDown > 0) {
         const countDownInt = setInterval(() => {
@@ -106,7 +105,7 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
       }
     }, [countDown, countDownModalIsVisible]); 
     
-
+    
     useEffect(() => {
       if(round) {
         const newWord = getRandomWord();
@@ -343,7 +342,7 @@ const TimeChallengeThemeOneScreen = ({ navigation }) => {
         </View>
       </Modal>
       <View style={styles.innerContainer}>
-        <Text style={[styles.title, { fontSize: titleFontSize }]}>Theme One</Text>
+        <Text style={[styles.title, { fontSize: titleFontSize }]}>Animals</Text>
         <View style={styles.upperContainer}>
           <View style={[styles.leftSubsetContainer, {width:subsetContainerWidth}, {height:subsetContainerHeight}]}>
             <Text style={{fontSize: upperContainerFontSize}}>⏰ {timer}s</Text>
@@ -584,7 +583,7 @@ const styles = StyleSheet.create({
     },
     countDownText: {
       fontSize: width * 0.3,
-      color: 'black',
+      color: 'white',
       fontWeight: 'bold',
     }
 
