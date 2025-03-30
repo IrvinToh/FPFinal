@@ -142,7 +142,7 @@ const ProgressionScreen = ({ navigation }) => {
         ))}
       </ScrollView>
       <View>
-        <TouchableOpacity style={styles.returnButton}>
+        <TouchableOpacity style={styles.returnButton} onPress={() => navigation.navigate('MainMenuScreen')}>
           <Text style={styles.returnButtonText}>Return</Text>
         </TouchableOpacity>
       </View>
