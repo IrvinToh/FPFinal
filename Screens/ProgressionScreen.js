@@ -63,7 +63,8 @@ const ProgressionScreen = ({ navigation }) => {
   const { wordToBeSaved, savedWords, saveWordToProgress } = useEventContext();
   const [interactedWords, setInteractedWords] = useState(null);
 
-
+  
+  //determines which parameter to be passed into the function and call it
   useEffect(() => {
     if (wordToBeSaved) {
       if(words.includes(wordToBeSaved)) {
@@ -91,17 +92,19 @@ const ProgressionScreen = ({ navigation }) => {
   }, [wordToBeSaved, saveWordToProgress]);
 
   
-
+  //handle interacted word state
   const handleInteractedWords = (interactedWord) => {
     setInteractedWords(prevInteractedWord => prevInteractedWord === interactedWord ? null : interactedWord);
   }
 
+  //Get progress function 
   const getProgress = () => {
     const totalWords = words.length + words2.length + words3.length;
     const guessedWords = savedWords.length;
     return guessedWords / totalWords; 
   };
 
+  //calculate progress percentage function
   const getProgressPercentage = () => {
     const totalWords = words.length + words2.length + words3.length;
     const guessedWords = savedWords.length;
@@ -138,6 +141,11 @@ const ProgressionScreen = ({ navigation }) => {
           </TouchableOpacity>
         ))}
       </ScrollView>
+      <View>
+        <TouchableOpacity style={styles.returnButton}>
+          <Text style={styles.returnButtonText}>Return</Text>
+        </TouchableOpacity>
+      </View>
     </LinearGradient>
     
   );
@@ -197,6 +205,20 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 20,
     borderWidth: 2,
+  },
+  returnButton: {
+    width: width * 0.95,
+    height: height * 0.05,
+    borderWidth: 2,
+    borderRadius: 20,
+    backgroundColor: '#360c85', 
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  returnButtonText: {
+    fontSize: width * 0.05,
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 

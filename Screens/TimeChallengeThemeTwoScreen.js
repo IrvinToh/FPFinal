@@ -7,217 +7,218 @@ const { width, height } = Dimensions.get('window');
 const words = ['Basketball', 'Tennis','Football', 'Cricket', 'Fencing', 'Volleyball', 'Archery', 'Bowling', 'Taekwondo', 'Golf']; // A list of words to be guessed
 
 const TimeChallengeThemeTwoScreen = ({ navigation }) => {
-    const { highScoreOne, manageHighScore} = useEventContext();
+  const { highScoreOne, manageHighScore} = useEventContext();
 
-    //use states
-    const [playerGuess, setPlayerGuess] = useState('');
-    const [colouredFeedback, setColouredFeedback] = useState(new Array(lengthOfWordToBeGuessed).fill(''));
-    const [message, setMessage] = useState('');
-    const [wordGuessedCorrectly, setWordGuessedCorrectly] = useState(false);
-    const [currentWordToBeGuessed, setCurrentWordToBeGuessed] = useState('');
-    const [lengthOfWordToBeGuessed, setLengthOfWordToBeGuessed] = useState(0);
-    const [wrongLettersGuessed, setWrongLettersGuessed] = useState([]);
-    const [jumbledWord, setJumbledWord] = useState('');
-    const [timer, setTimer] = useState(60);
-    const [timerStatus, setTimerStatus] = useState(false);
-    const [lives, setLives] = useState(5);
-    const [round, setRound] = useState(false);
-    const [score, setScore] = useState(0);
-    const [startRoundButtonIsVisible, setStartRoundButtonIsVisible] = useState(true);
-    const [roundOver, setRoundOver] = useState(false);
-    const [countDownModalIsVisible, setCountDownModalIsVisible] = useState(true);
-    const [countDown, setCountDown] = useState(5);
-    //responsive sizes
-    const titleFontSize = width * 0.1;
+  //use states
+  const [playerGuess, setPlayerGuess] = useState('');
+  const [colouredFeedback, setColouredFeedback] = useState(new Array(lengthOfWordToBeGuessed).fill(''));
+  const [message, setMessage] = useState('');
+  const [wordGuessedCorrectly, setWordGuessedCorrectly] = useState(false);
+  const [currentWordToBeGuessed, setCurrentWordToBeGuessed] = useState('');
+  const [lengthOfWordToBeGuessed, setLengthOfWordToBeGuessed] = useState(0);
+  const [wrongLettersGuessed, setWrongLettersGuessed] = useState([]);
+  const [jumbledWord, setJumbledWord] = useState('');
+  const [timer, setTimer] = useState(60);
+  const [timerStatus, setTimerStatus] = useState(false);
+  const [lives, setLives] = useState(5);
+  const [round, setRound] = useState(false);
+  const [score, setScore] = useState(0);
+  const [startRoundButtonIsVisible, setStartRoundButtonIsVisible] = useState(true);
+  const [roundOver, setRoundOver] = useState(false);
+  const [countDownModalIsVisible, setCountDownModalIsVisible] = useState(true);
+  const [countDown, setCountDown] = useState(5);
+  //responsive sizes
+  const titleFontSize = width * 0.1;
 
-    const cellWidth = width * 0.1;
-    const cellHeight = height * 0.06;
-    const cellTextSize = width * 0.06;
-    const guessButtonMarginTop = height * 0.045;
-    const keyboardMarginTop = height * 0.03;
-    const keyHeight = height * 0.08;
-    const keyTextSize = width * 0.06;
-    const backspaceKeyWidth = width * 0.2;
-    const returnToClassicThemesButtonWidth = width * 0.94;
-    const returnToClassicThemesButtonHeight = height * 0.05;
-    const returnToClassicThemesButtonMarginTop = height * 0.01;
-    const jumbledWordFontSize = width * 0.05;
-    const upperContainerFontSize = width * 0.05;
-    const subsetContainerWidth = width * 0.375;
-    const subsetContainerHeight = height * 0.1;
-    const roundOverPanelWidth = width * 0.7;
-    const roundOverPanelHeight = height * 0.4;
-    const roundOverPanelTextSizeMain = width * 0.1;
-    const roundOverPanelTextSize = width * 0.06;
-    const roundOverPanelButtonWidth = width * 0.6;
-    const roundOverPanelButtonHeight = height * 0.05;
+  const cellWidth = width * 0.1;
+  const cellHeight = height * 0.06;
+  const cellTextSize = width * 0.06;
+  const guessButtonMarginTop = height * 0.045;
+  const keyboardMarginTop = height * 0.03;
+  const keyHeight = height * 0.08;
+  const keyTextSize = width * 0.06;
+  const backspaceKeyWidth = width * 0.2;
+  const returnToClassicThemesButtonWidth = width * 0.94;
+  const returnToClassicThemesButtonHeight = height * 0.05;
+  const returnToClassicThemesButtonMarginTop = height * 0.01;
+  const jumbledWordFontSize = width * 0.05;
+  const upperContainerFontSize = width * 0.05;
+  const subsetContainerWidth = width * 0.375;
+  const subsetContainerHeight = height * 0.1;
+  const roundOverPanelWidth = width * 0.7;
+  const roundOverPanelHeight = height * 0.4;
+  const roundOverPanelTextSizeMain = width * 0.1;
+  const roundOverPanelTextSize = width * 0.06;
+  const roundOverPanelButtonWidth = width * 0.6;
+  const roundOverPanelButtonHeight = height * 0.05;
 
 
-    //resets the states to prepare for a new round
-    const startRound = () => {
-      setRound(true);
-      setPlayerGuess('');
-      setColouredFeedback(['', '', '', '', '']);
-      setMessage('');
-      setWordGuessedCorrectly(false);
-      setLives(5); 
-      setTimer(60); 
+  //resets the states to prepare for a new round
+  const startRound = () => {
+    setRound(true);
+    setPlayerGuess('');
+    setColouredFeedback(['', '', '', '', '']);
+    setMessage('');
+    setWordGuessedCorrectly(false);
+    setLives(5); 
+    setTimer(60); 
+    setTimerStatus(true);
+    setScore(0);
+    setStartRoundButtonIsVisible(false);
+    setRoundOver(false);
+    
+  }
+
+  //function to end the current round
+  const endRound = () => {
+    setRound(false);
+    setTimerStatus(false);
+    setJumbledWord('');
+    setRoundOver(true);
+
+  }
+
+  //to pick a word from the list of words to be guessed
+  const getRandomWord = () => {
+      return words[Math.floor(Math.random() * words.length)].toLowerCase();
+  }
+
+  //shuffle words
+  const jumbleWords = (word) => {
+      let wordSplited = word.split('');
+      for(let i=wordSplited.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i+1));
+      [wordSplited[i], wordSplited[j]] = [wordSplited[j], wordSplited[i]];
+      }
+      return wordSplited.join('');
+  }
+
+  //handles the displaying of the countdown modal
+  useEffect(() => {
+    if(countDownModalIsVisible && countDown > 0) {
+      const countDownInt = setInterval(() => {
+        setCountDown((prevCount) => prevCount - 1);
+      }, 1000);
+  
+      return () => clearInterval(countDownInt);
+    } else if (countDown === 0) {
+      setCountDownModalIsVisible(false);
+      startRound();
+    }
+  }, [countDown, countDownModalIsVisible]); 
+  
+  //useEffect hook to get new word
+  useEffect(() => {
+    if(round) {
+      const newWord = getRandomWord();
+      const shuffledWord = jumbleWords(newWord);
+      setJumbledWord(shuffledWord);
+      setCurrentWordToBeGuessed(newWord);
+      setLengthOfWordToBeGuessed(newWord.length);
       setTimerStatus(true);
-      setScore(0);
-      setStartRoundButtonIsVisible(false);
-      setRoundOver(false);
-      
     }
+  }, [round]); 
 
-    //function to end the current round
-    const endRound = () => {
-      setRound(false);
-      setTimerStatus(false);
-      setJumbledWord('');
-      setRoundOver(true);
-
+  //This function handles the timer function
+  useEffect(() => {
+    if (timerStatus && timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((previousTimer) => previousTimer - 1); // Decrease timer by 1 each second
+      }, 1000);
+  
+      return () => clearInterval(interval);
+    } else if (timer === 0) {
+      endRound(); 
     }
+  }, [timer, timerStatus]); 
 
-    //to pick a word from the list of words to be guessed
-    const getRandomWord = () => {
-        return words[Math.floor(Math.random() * words.length)].toLowerCase();
+  //This function triggers the end of the round when the players use up their lives
+  useEffect(() => {
+    if (lives === 0) {
+      endRound();
     }
+  }, [lives]); 
 
-    //shuffle words
-    const jumbleWords = (word) => {
-        let wordSplited = word.split('');
-        for(let i=wordSplited.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i+1));
-        [wordSplited[i], wordSplited[j]] = [wordSplited[j], wordSplited[i]];
-        }
-        return wordSplited.join('');
-    }
+  useEffect(() => {
+    manageHighScore(score);
+  }, [score]);
 
-    useEffect(() => {
-      if(countDownModalIsVisible && countDown > 0) {
-        const countDownInt = setInterval(() => {
-          setCountDown((prevCount) => prevCount - 1);
-        }, 1000);
-    
-        return () => clearInterval(countDownInt);
-      } else if (countDown === 0) {
-        setCountDownModalIsVisible(false);
-        startRound();
-      }
-    }, [countDown, countDownModalIsVisible]); 
-    
-
-    useEffect(() => {
-      if(round) {
-        const newWord = getRandomWord();
-        const shuffledWord = jumbleWords(newWord);
-        setJumbledWord(shuffledWord);
-        setCurrentWordToBeGuessed(newWord);
-        setLengthOfWordToBeGuessed(newWord.length);
-        setTimerStatus(true);
-      }
-    }, [round]); 
-
-    //This function handles the timer function
-    useEffect(() => {
-      if (timerStatus && timer > 0) {
-        const interval = setInterval(() => {
-          setTimer((previousTimer) => previousTimer - 1); // Decrease timer by 1 each second
-        }, 1000);
-    
-        return () => clearInterval(interval);
-      } else if (timer === 0) {
-        endRound(); 
-      }
-    }, [timer, timerStatus]); 
-
-    //This function triggers the end of the round when the players use up their lives
-    useEffect(() => {
-      if (lives === 0) {
-        endRound();
-      }
-    }, [lives]); 
-
-    useEffect(() => {
-      manageHighScore(score);
-    }, [score]);
-
-    //Determines whether the players got their guesses right
-    const handleGuess = () => {
-        if (playerGuess.length === lengthOfWordToBeGuessed) {
-            const playerGuessSmallLetters = playerGuess.toLowerCase(); 
-            const newColouredFeedback = getColouredFeedback(playerGuessSmallLetters);
-            setColouredFeedback(newColouredFeedback);
-            //Player guess is compared with the current word to be guessed
-            if (playerGuessSmallLetters === currentWordToBeGuessed) { 
-            setWordGuessedCorrectly(true); 
-            Alert.alert(
-              "Result",
-              "Congratulations, You got the correct answer!",
-              [
-                {
-                  text: "Next Word",
-                  onPress: () => getNextWord(),
-                }
-              ],
-              {cancelable: true}
-            )
-            setTimer(previousTimer => previousTimer + 5);
-            setScore(previousScore => previousScore + 1);
-          } else {
-              // If playerGuess does not match current word to be guessed
-              Alert.alert(
-                "Error",
-                "Try again",
-                [
-                  {
-                    text: "OK",
-                    onPress: () => console.log('Error acknowledged(Wrong Guess)'),
-                  }
-                ],
-                {cancelable: true}
-              )
-              setLives(previousLives => previousLives -1);
-            }
-        } else {
-          //If length of playerGuess does not match length of current word to be guessed
+  //Determines whether the players got their guesses right
+  const handleGuess = () => {
+      if (playerGuess.length === lengthOfWordToBeGuessed) {
+          const playerGuessSmallLetters = playerGuess.toLowerCase(); 
+          const newColouredFeedback = getColouredFeedback(playerGuessSmallLetters);
+          setColouredFeedback(newColouredFeedback);
+          //Player guess is compared with the current word to be guessed
+          if (playerGuessSmallLetters === currentWordToBeGuessed) { 
+          setWordGuessedCorrectly(true); 
           Alert.alert(
-            "Error",
-            "Guess must be " + lengthOfWordToBeGuessed + " letters!",
+            "Result",
+            "Congratulations, You got the correct answer!",
             [
               {
-                text: "OK",
-                onPress: () => console.log('Error acknowledged(Insufficient letters)'),
+                text: "Next Word",
+                onPress: () => getNextWord(),
               }
             ],
             {cancelable: true}
           )
-          setLives(previousLives => previousLives -1);
-        }
-    };
+          setTimer(previousTimer => previousTimer + 5);
+          setScore(previousScore => previousScore + 1);
+        } else {
+            // If playerGuess does not match current word to be guessed
+            Alert.alert(
+              "Error",
+              "Try again",
+              [
+                {
+                  text: "OK",
+                  onPress: () => console.log('Error acknowledged(Wrong Guess)'),
+                }
+              ],
+              {cancelable: true}
+            )
+            setLives(previousLives => previousLives -1);
+          }
+      } else {
+        //If length of playerGuess does not match length of current word to be guessed
+        Alert.alert(
+          "Error",
+          "Guess must be " + lengthOfWordToBeGuessed + " letters!",
+          [
+            {
+              text: "OK",
+              onPress: () => console.log('Error acknowledged(Insufficient letters)'),
+            }
+          ],
+          {cancelable: true}
+        )
+        setLives(previousLives => previousLives -1);
+      }
+  };
 
-    //function for clearing the player's guess
-    const clearGuess = () => {
-        setPlayerGuess('');
+  //function for clearing the player's guess
+  const clearGuess = () => {
+      setPlayerGuess('');
+  }
+
+  //to pick a new word from the list of words to be guessed
+  const getNextWord = () => {
+    let newWord = getRandomWord();
+    while (newWord === currentWordToBeGuessed) 
+    { 
+      newWord = getRandomWord(); 
     }
+    let newJumbledWord = jumbleWords(newWord);
+    setWordGuessedCorrectly(false);
+    setPlayerGuess('');
+    setColouredFeedback('');
 
-    //to pick a new word from the list of words to be guessed
-    const getNextWord = () => {
-        let newWord = getRandomWord();
-        while (newWord === currentWordToBeGuessed) 
-        { 
-          newWord = getRandomWord(); 
-        }
-        let newJumbledWord = jumbleWords(newWord);
-        setWordGuessedCorrectly(false);
-        setPlayerGuess('');
-        setColouredFeedback('');
-
-        setCurrentWordToBeGuessed(newWord);
-        setLengthOfWordToBeGuessed(newWord.length);
-        setWrongLettersGuessed([]);
-        setJumbledWord(newJumbledWord);
-    }
+    setCurrentWordToBeGuessed(newWord);
+    setLengthOfWordToBeGuessed(newWord.length);
+    setWrongLettersGuessed([]);
+    setJumbledWord(newJumbledWord);
+  }
 
   //assigns colour to the cells depending on the letters in it
   const getColouredFeedback = (playerGuess) => {
@@ -272,15 +273,6 @@ const TimeChallengeThemeTwoScreen = ({ navigation }) => {
     currentWordRef.current = currentWordToBeGuessed;  
   }, [currentWordToBeGuessed]);
 
-  //function to expose the word for testing purposes
-  const getCurrentWord = () => {
-    return currentWordRef.current; 
-  };
-
-  // Expose this function to tests
-  if (process.env.NODE_ENV === 'test') {
-    window.getCurrentWord = getCurrentWord;  
-  }
 
 
   //function for the layout of the onscreen keyboard

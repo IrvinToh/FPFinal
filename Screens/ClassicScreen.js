@@ -13,83 +13,85 @@ const ClassicScreen = ({ navigation }) => {
   const themeContainerHeight = height * 0.4;
 
   const [scaleOne] = useState(new Animated.Value(1));
-    const [scaleTwo] = useState(new Animated.Value(1));
-    const [scaleThree] = useState(new Animated.Value(1));
-    const [scaleFour] = useState(new Animated.Value(1));
-    
-    const imageScaleValue = useRef(new Animated.Value(1)).current;
+  const [scaleTwo] = useState(new Animated.Value(1));
+  const [scaleThree] = useState(new Animated.Value(1));
+  const [scaleFour] = useState(new Animated.Value(1));
   
-    useEffect(() => {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(imageScaleValue, {
-            toValue: 1.1, 
-            duration: 2000, 
-            useNativeDriver: true,
-          }),
-          Animated.timing(imageScaleValue, {
-            toValue: 1, 
-            duration: 2000, 
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    }, []);
+  const imageScaleValue = useRef(new Animated.Value(1)).current;
   
-    const onPressInOne = () => {
-      Animated.spring(scaleOne, {
-        toValue: 1.1, 
-        useNativeDriver: true,
-      }).start();
-    };
+  //button animations
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(imageScaleValue, {
+          toValue: 1.1, 
+          duration: 2000, 
+          useNativeDriver: true,
+        }),
+        Animated.timing(imageScaleValue, {
+          toValue: 1, 
+          duration: 2000, 
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
   
-    const onPressOutOne = () => {
-      Animated.spring(scaleOne, {
-        toValue: 1, 
-        useNativeDriver: true,
-      }).start();
-    };
-  
-    const onPressInTwo = () => {
-      Animated.spring(scaleTwo, {
-        toValue: 1.1, 
-        useNativeDriver: true,
-      }).start();
-    };
-  
-    const onPressOutTwo = () => {
-      Animated.spring(scaleTwo, {
-        toValue: 1, 
-        useNativeDriver: true,
-      }).start();
-    };
-  
-    const onPressInThree = () => {
-      Animated.spring(scaleThree, {
-        toValue: 1.1, 
-        useNativeDriver: true,
-      }).start();
-    };
-  
-    const onPressOutThree = () => {
-      Animated.spring(scaleThree, {
-        toValue: 1, 
-        useNativeDriver: true,
-      }).start();
-    };
-    const onPressInFour = () => {
-      Animated.spring(scaleFour, {
-        toValue: 1.1, 
-        useNativeDriver: true,
-      }).start();
-    };
-  
-    const onPressOutFour = () => {
-      Animated.spring(scaleFour, {
-        toValue: 1, 
-        useNativeDriver: true,
-      }).start();
-    };
+  //function for animations
+  const onPressInOne = () => {
+    Animated.spring(scaleOne, {
+      toValue: 1.1, 
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const onPressOutOne = () => {
+    Animated.spring(scaleOne, {
+      toValue: 1, 
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const onPressInTwo = () => {
+    Animated.spring(scaleTwo, {
+      toValue: 1.1, 
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const onPressOutTwo = () => {
+    Animated.spring(scaleTwo, {
+      toValue: 1, 
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const onPressInThree = () => {
+    Animated.spring(scaleThree, {
+      toValue: 1.1, 
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const onPressOutThree = () => {
+    Animated.spring(scaleThree, {
+      toValue: 1, 
+      useNativeDriver: true,
+    }).start();
+  };
+  const onPressInFour = () => {
+    Animated.spring(scaleFour, {
+      toValue: 1.1, 
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const onPressOutFour = () => {
+    Animated.spring(scaleFour, {
+      toValue: 1, 
+      useNativeDriver: true,
+    }).start();
+  };
 
   return (
     // LinearGradient to set background for the screen

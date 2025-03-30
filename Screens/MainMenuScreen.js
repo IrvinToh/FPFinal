@@ -6,6 +6,7 @@ const { width, height } = Dimensions.get('window');
 
 const MainMenuScreen = ({ navigation }) => {
 
+  //Animation states and functions
   const [scaleOne] = useState(new Animated.Value(1));
   const [scaleTwo] = useState(new Animated.Value(1));
   const [scaleThree] = useState(new Animated.Value(1));

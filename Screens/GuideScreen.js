@@ -15,6 +15,7 @@ const GuideScreen = ({ navigation }) => {
   const [answerModalVisible, setAnswerModalVisible] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState('');
 
+  //Function to reveal answer when the question is clicked on
   const showAnswer = (index) => {
     setSelectedAnswer(answers[index]);
     setAnswerModalVisible(true);
@@ -38,6 +39,9 @@ const GuideScreen = ({ navigation }) => {
         </TouchableOpacity>
         <TouchableOpacity style={styles.qnsContainer} onPress={() => showAnswer(3)}>
           <Text style={styles.qns}> How does progression work?</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.qnsContainer} onPress={() => navigation.navigate('MainMenuScreen')}> 
+          <Text style={styles.qns}>Return</Text>
         </TouchableOpacity>
       </ScrollView>
       <Modal

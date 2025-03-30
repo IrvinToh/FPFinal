@@ -19,6 +19,7 @@ const TimeChallengeScreen = ({ navigation }) => {
   
   const imageScaleValue = useRef(new Animated.Value(1)).current;
 
+  //button animations
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
@@ -36,6 +37,7 @@ const TimeChallengeScreen = ({ navigation }) => {
     ).start();
   }, []);
 
+  //function for animations
   const onPressInOne = () => {
     Animated.spring(scaleOne, {
       toValue: 1.1, 

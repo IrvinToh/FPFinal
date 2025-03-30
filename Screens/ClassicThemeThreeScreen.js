@@ -61,6 +61,7 @@ const ClassicThemeThreeScreen = ({ navigation }) => {
         return words[Math.floor(Math.random() * words.length)].toLowerCase();
     }
 
+    //set new word
     useEffect(() => {
         const newWord = getRandomWord();
         setCurrentWordToBeGuessed(newWord);
@@ -69,6 +70,7 @@ const ClassicThemeThreeScreen = ({ navigation }) => {
         
     }, []); 
 
+    //Manage visibility of options menu
     const toggleOptionsMenuVisibility = () => {
       if (optionsMenuVisibility) {
         Animated.timing(optionsMenuAnimation, {
@@ -200,10 +202,12 @@ const ClassicThemeThreeScreen = ({ navigation }) => {
     return overallColourFeedback;
   };
 
+  //get hint
   const getRandomLetterForHint = () => {
     return Math.floor(Math.random() * (currentWordToBeGuessed.length))
   }
 
+  //function for getting hint
   const getHint = () => {
     Alert.alert(
       "Hint",
@@ -218,7 +222,7 @@ const ClassicThemeThreeScreen = ({ navigation }) => {
     )
   }
 
-
+  //function for getting answer
   const getAnswer = () => {
     Alert.alert(
       "Answer",
@@ -233,6 +237,7 @@ const ClassicThemeThreeScreen = ({ navigation }) => {
     )
   }
 
+  //function for getting description
   const getCurrentDescription = (currentWord) => {
     let currentWordIndex = words.indexOf(currentWord);
     let getCurrentDescription = definitions[currentWordIndex];

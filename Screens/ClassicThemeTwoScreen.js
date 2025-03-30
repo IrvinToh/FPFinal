@@ -61,6 +61,7 @@ const ClassicThemeTwoScreen = ({ navigation }) => {
         return words[Math.floor(Math.random() * words.length)].toLowerCase();
     }
 
+    //set new word
     useEffect(() => {
         const newWord = getRandomWord();
         setCurrentWordToBeGuessed(newWord);
@@ -69,6 +70,7 @@ const ClassicThemeTwoScreen = ({ navigation }) => {
         
     }, []); 
 
+    //Manage visibility of options menu
     const toggleOptionsMenuVisibility = () => {
       if (optionsMenuVisibility) {
         Animated.timing(optionsMenuAnimation, {
@@ -200,10 +202,12 @@ const ClassicThemeTwoScreen = ({ navigation }) => {
     return overallColourFeedback;
   };
 
+  //get hint
   const getRandomLetterForHint = () => {
     return Math.floor(Math.random() * (currentWordToBeGuessed.length))
   }
 
+  //function for getting hint
   const getHint = () => {
     Alert.alert(
       "Hint",
@@ -219,6 +223,7 @@ const ClassicThemeTwoScreen = ({ navigation }) => {
   }
 
 
+  //function for getting answer
   const getAnswer = () => {
     Alert.alert(
       "Answer",
@@ -233,6 +238,7 @@ const ClassicThemeTwoScreen = ({ navigation }) => {
     )
   }
 
+  //function for getting description
   const getCurrentDescription = (currentWord) => {
     let currentWordIndex = words.indexOf(currentWord);
     let getCurrentDescription = definitions[currentWordIndex];
@@ -258,16 +264,6 @@ const ClassicThemeTwoScreen = ({ navigation }) => {
     
     getCurrentDescription(currentWordToBeGuessed);
   }, [currentWordToBeGuessed]); 
-
-  //function to expose the word for testing purposes
-  const getCurrentWord = () => {
-    return currentWordRef.current; 
-  };
-
-  // Expose this function to tests
-  if (process.env.NODE_ENV === 'test') {
-    window.getCurrentWord = getCurrentWord;  
-  }
 
 
   //function for the layout of the onscreen keyboard
